@@ -1,0 +1,291 @@
+.posts-page {
+    padding: 20px;
+    background-color: var(--bg);
+    min-height: 100vh;
+}
+
+.no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.posts-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    animation: fadeIn 0.8s ease;
+}
+
+.posts-title {
+    color: var(--accent);
+    font-size: 3rem;
+    font-family: "SanghaKali", serif;
+    text-shadow: 0 0 10px var(--border);
+}
+
+.posts-search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+}
+
+.posts-search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+}
+
+.posts-search-input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    background: var(--code-bg);
+    font-family: "Memory", serif;
+    color: var(--text);
+    outline: none;
+    transition: 0.3s;
+}
+
+.posts-search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* Теги */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tag-badge {
+    padding: 8px 16px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Memory", serif;
+}
+
+.tag-badge:hover {
+    background: var(--border);
+}
+
+.tag-badge.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.posts-drafts-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--code-bg);
+    color: var(--text);
+
+    font-family: "Memory", serif;
+    font-size: 1rem;
+    cursor: pointer;
+
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.posts-drafts-btn i {
+    font-size: 0.9rem;
+    transition: transform 0.25s ease;
+}
+
+.posts-drafts-btn:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--border), 0 0 18px var(--accent);
+    transform: translateY(-2px);
+}
+
+.posts-drafts-btn:hover i {
+    transform: translateY(-1px);
+}
+
+.posts-drafts-btn:active {
+    transform: translateY(0) scale(0.97);
+
+    box-shadow: 0 0 6px var(--accent);
+
+    transition: 0.1s ease;
+}
+
+/* Сітка */
+.posts-grid {
+    padding: 10px 30px;
+    background-color: var(--bg);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    animation: zoomDrop 1s ease-out;
+}
+
+.posts-no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+
+/* Пагінація */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 40px 0;
+    padding-bottom: 20px;
+}
+
+.page-btn {
+    background: var(--code-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-family: "Memory", serif;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-posts__btn--add {
+    position: fixed;
+    right: 50px;
+    bottom: 30px;
+
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--border);
+    border-radius: 50%;
+
+    background-color: var(--accent);
+    color: var(--code-bg);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    font-size: 1.3rem;
+    line-height: 1;
+
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.page-posts__btn--add:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+
+    transform: scale(1.1);
+
+    box-shadow:
+        0 0 10px var(--border),
+        0 0 25px var(--accent);
+}
+
+.page-posts__btn--add:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 780px) {
+    .page-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .posts-grid {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .posts-header { 
+        margin-bottom: 10px;
+    }
+
+    .tags-list {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+
+        gap: 8px;
+        width: 100%;
+        padding: 5px 10px 15px 10px;
+
+        scrollbar-width: thin; 
+        scrollbar-color: var(--accent) var(--border);
+        -ms-overflow-style: none;
+    }
+
+    .tags-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tag-badge {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .page-posts__btn--add { 
+        width: 48px; 
+        height: 48px; 
+        right: 18px; 
+        bottom: 18px; 
+        font-size: 28px; 
+    }
+}

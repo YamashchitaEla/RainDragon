@@ -1,0 +1,203 @@
+.draft-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--code-bg);
+    border-radius: 4px;
+    padding: 0;
+    margin: 10px;
+    width: clamp(280px, 45vw, 500px);
+    aspect-ratio: 16 / 9;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    cursor: pointer;
+    border: 1px solid var(--border);
+
+    transition:
+        background-color 0.3s ease,
+        filter 0.3s ease,
+        transform 0.3s ease;
+}
+
+@keyframes draft-card-glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+.draft-card:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: draft-card-glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.draft-card:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.draft-card__preview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.draft-card__preview-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+
+    filter: grayscale(25%) brightness(0.75);
+    transition:
+        transform 0.5s ease,
+        filter 0.5s ease;
+}
+
+.draft-card:hover .draft-card__preview-image {
+    transform: scale(1.05);
+    filter: grayscale(0%) brightness(0.9);
+}
+
+.draft-card__overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.6) 40%,
+            rgba(255, 255, 255, 0.05) 80%,
+            transparent 100%
+        );
+}
+
+.draft-card__title {
+    margin: 0 0 8px;
+    padding: 0;
+
+    font-family: "SanghaKali", "Times New Roman", Times, serif;
+
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1.15;
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border), 0 2px 10px rgba(0, 0, 0, 0.8);
+    overflow-wrap: anywhere;
+}
+
+.draft-card__badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+    padding: 6px 12px;
+
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    color: var(--code-bg);
+    background-color: rgba(0, 0, 0, 0.65);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    backdrop-filter: blur(5px);
+}
+
+.draft-card__description {
+    margin: 0;
+    max-width: 90%;
+    font-family: "Memory", "Times New Roman", Times, serif;
+
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    line-height: 1.4;
+
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    overflow: hidden;
+}
+
+.draft-card__edit {
+    display: block;
+    margin-top: 10px;
+    font-family: "Memory", "Times New Roman", Times, serif;
+    text-shadow: 0 0 5px var(--border);
+    color: var(--code-bg);
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(5px);
+
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.draft-card:hover .draft-card__edit {
+    opacity: 0.5;
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .draft-card {
+        width: calc(100% - 20px);
+        max-width: 500px;
+        margin: 10px;
+        aspect-ratio: 16 / 10;
+    }
+
+    .draft-card__badge {
+        padding: 3px 6px;
+
+        font-family: "Memory", "Times New Roman", Times, serif;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+
+        color: var(--code-bg);
+        background-color: rgba(0, 0, 0, 0.65);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        backdrop-filter: blur(5px);
+    }
+
+    .draft-card__overlay {
+        padding: 15px;
+    }
+
+    .draft-card__title {
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+    }
+
+    .draft-card__description {
+        max-width: 100%;
+        font-size: 0.85rem;
+        line-height: 1.35;
+    }
+}
+

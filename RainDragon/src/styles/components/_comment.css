@@ -1,0 +1,287 @@
+* {
+    box-sizing: border-box;
+}
+
+.page-book__comments-section {
+    margin: 40px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comments-title {
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+}
+
+/* Поле введення */
+.comment__input {
+    width: 100%;
+    min-height: 80px;
+    background-color: var(--border);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px;
+    font-family: "Memory", serif;
+    resize: vertical;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.comment__input::placeholder {
+    color: var(--accent);
+    opacity: 0.5;
+}
+
+.comment__input:focus {
+    border-color: var(--accent);
+}
+
+.comment__send-main {
+    margin-top: 10px;
+    align-self: flex-end;
+    padding: 8px 20px;
+    background-color: var(--accent);
+    color: var(--code-bg);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Стиль коментаря */
+.comment-container {
+    margin-bottom: 5px;
+}
+
+.comment {
+    display: flex;
+    min-width: 0;
+    gap: 15px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.comment__avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    margin: 10px;
+    display: block; /* Додано */
+    position: relative; /* Додано для стабільності тіні */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Покращено */
+}
+
+.comment__avatar:hover {
+    animation: glow 1.5s infinite;
+    transform: scale(1.05); /* Додамо легке збільшення для ефекту */
+}
+
+.comment__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.comment__nickname {
+    flex: 1;
+    min-width: 0;
+    font-family: "SanghaKali", serif;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.comment__date {
+    margin-left: auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color: var(--accent);
+    font-family: "Memory", serif;
+    font-size: 0.75rem;
+}
+
+.comment__text {
+    color: var(--text);
+    font-family: "Memory", serif;
+    line-height: 1.4;
+    margin: 5px 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.comment__reply-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: "Memory", serif;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.comment__reply-btn:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Відповіді (рекурсія) */
+.comment__replies {
+    margin-left: 65px; /* Зсув для гілки */
+    border-left: 2px solid var(--border);
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.comment__reply-input-wrapper {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.comment__input-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-send, .btn-cancel {
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    font-family: "Memory", serif;
+    font-size: 0.9rem;
+}
+
+.comment__edit-btn, .comment__delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+.comment__edit-btn { color: var(--accent); }
+.comment__delete-btn { color: #ff4d4d; }
+
+.comment__edit-btn:hover, .comment__delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.comment__edit-wrapper {
+    margin: 10px 0;
+}
+
+@media screen and (max-width: 768px) {
+
+    .page-book__comments-section {
+        margin: 20px 15px;
+        gap: 15px;
+    }
+
+    .comment {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .comment__avatar {
+        width: 35px;
+        height: 35px;
+        margin: 5px;
+    }
+
+    /* Шапка коментаря */
+    .comment__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 3px;
+        margin-bottom: 5px;
+    }
+
+    .comment__nickname {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    /* Кнопки редагування / видалення */
+    .comment__meta {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    .comment__edit-btn,
+    .comment__delete-btn {
+        flex-shrink: 0;
+        padding: 2px;
+        font-size: 0.85rem;
+    }
+
+    /* Дата завжди під ніком і кнопками */
+    .comment__date {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin: 0;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        font-size: 0.7rem;
+    }
+
+    .comment__text {
+        color: var(--text);
+        font-family: "Memory", serif;
+        line-height: 1.4;
+        margin: 5px 0;
+        font-size: 0.7rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .comment__replies {
+        margin-left: 15px;
+        padding-left: 10px;
+    }
+
+    .comment__reply-btn {
+        font-size: 0.75rem;
+    }
+
+    .comment__reply-input-wrapper {
+        padding: 0 5px;
+    }
+
+    .btn-send,
+    .btn-cancel {
+        font-size: 0.8rem;
+        padding: 8px 15px;
+    }
+
+    .comment__send-main {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.btn-send { background-color: var(--accent); color: var(--code-bg); }
+.btn-cancel { background-color: transparent; color: var(--text); border: 1px solid var(--border); }

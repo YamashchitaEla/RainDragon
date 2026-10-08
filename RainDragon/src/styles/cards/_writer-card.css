@@ -1,0 +1,108 @@
+.writer-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--code-bg);
+    border-radius: 4px;
+    padding: 30px 20px;
+    margin: 10px;
+
+    width: clamp(150px, 30vw, 250px);
+    aspect-ratio: 5 / 7;
+
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: background-color 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+    transition: background-color 0.30s ease, transform 0.30s ease, color 0.30s ease;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Декоративний елемент (іконка пера або профілю на фоні) */
+.writer-card::before {
+    content: '\f303'; /* Код пера у FontAwesome */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    top: 20px;
+    font-size: 4rem;
+    color: var(--border);
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+}
+
+.writer-card:hover::before {
+    opacity: 0.3;
+    color: var(--accent);
+}
+
+/* Ховер ефект (копіюємо з book-card для ідентичності) */
+.writer-card:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+}
+
+.writer-card:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    animation-play-state: paused;
+}
+
+/* Ім'я автора */
+.writer-full_name {
+    font-family: "SanghaKali", 'Times New Roman', serif;
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+    font-size: 1.6rem;
+    margin: 15px 0 10px;
+    line-height: 1.2;
+    z-index: 1;
+}
+
+/* Дата народження */
+.writer-card p {
+    font-family: "Memory", 'Times New Roman', serif;
+    color: var(--accent);
+    font-size: 1rem;
+    margin: 0;
+    z-index: 1;
+}
+
+.writer-card p strong {
+    color: var(--text);
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.writer-card i {
+    margin-right: 8px;
+    color: var(--accent);
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+@media (max-width: 768px) {
+    .writer-card {
+        width: calc(50% - 5px);
+        max-width: 180px;
+        margin: 0;
+        padding: 10px;
+    }
+}

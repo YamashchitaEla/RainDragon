@@ -1,0 +1,284 @@
+.create-writer {
+    width: 100%;
+    min-height: 100%;
+    flex: 1;
+    background-color: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 50px;
+}
+
+.create-writer__title {
+    margin: 40px 100px 20px 100px;
+
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    font-size: 2.2rem;
+
+    text-shadow: 0 0 10px var(--border);
+
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+}
+
+.create-writer__form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+
+    margin: 0 100px;
+    padding: 30px;
+
+    background-color: rgba(255, 255, 255, 0.02);
+
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.create-writer__group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-writer__group label {
+    font-family: "Memory", serif;
+    color: var(--accent);
+    font-size: 1.1rem;
+
+    text-shadow: 0 0 5px var(--border);
+}
+
+.create-writer__group input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 15px;
+
+    background-color: var(--accent-bg);
+
+    border: 1px solid var(--accent-border);
+    border-right: 2px solid var(--accent-border);
+    border-radius: 8px;
+
+    color: var(--text);
+
+    font-family: "Memory", serif;
+    font-size: 1rem;
+
+    outline: none;
+
+    transition: all 0.3s ease;
+}
+
+.create-writer__group input::placeholder {
+    color: var(--accent);
+}
+
+.create-writer__group input:focus {
+    border-color: var(--accent);
+
+    box-shadow: 0 0 8px rgba(160, 115, 94, 0.3);
+}
+
+/* Поле вибору дати */
+.create-writer__date-picker {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 15px;
+
+    background-color: var(--accent-bg);
+
+    border: 1px solid var(--accent-border);
+    border-right: 2px solid var(--accent-border);
+    border-radius: 8px;
+
+    color: var(--text);
+
+    font-family: "Memory", serif;
+    font-size: 1rem;
+
+    outline: none;
+
+    transition: all 0.3s ease;
+}
+
+.create-writer__date-picker::placeholder {
+    color: var(--accent);
+}
+
+.create-writer__date-picker:focus {
+    border-color: var(--accent);
+
+    box-shadow: 0 0 8px rgba(160, 115, 94, 0.3);
+}
+
+
+/* Контейнер календаря */
+.create-writer__calendar {
+    background-color: var(--code-bg) !important;
+
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+
+    font-family: "Memory", serif !important;
+
+    color: var(--text);
+}
+
+
+/* Шапка календаря */
+.create-writer__calendar .react-datepicker__header {
+    background-color: var(--accent-bg) !important;
+
+    border-bottom: 1px solid var(--border);
+
+    padding-top: 12px;
+}
+
+/* Назва місяця */
+.create-writer__calendar
+.react-datepicker__current-month {
+    color: var(--accent) !important;
+
+    font-family: "SanghaKali", serif;
+    font-size: 1.2rem;
+}
+
+/* Дні тижня */
+.create-writer__calendar
+.react-datepicker__day-name {
+    color: var(--accent) !important;
+
+    font-family: "Memory", serif;
+}
+
+/* Звичайні дні */
+.create-writer__calendar
+.react-datepicker__day {
+    color: var(--text);
+
+    border-radius: 6px;
+
+    transition: all 0.2s ease;
+}
+
+/* Hover */
+.create-writer__calendar
+.react-datepicker__day:hover {
+    background-color: var(--accent) !important;
+
+    color: var(--code-bg) !important;
+}
+
+/* Сьогодні */
+.create-writer__calendar
+.react-datepicker__day--today {
+    color: var(--accent);
+
+    font-weight: bold;
+}
+
+/* Вибрана дата */
+.create-writer__calendar
+.react-datepicker__day--selected {
+    background-color: var(--border) !important;
+
+    color: var(--text) !important;
+}
+
+/* Hover вибраної */
+.create-writer__calendar
+.react-datepicker__day--selected:hover {
+    background-color: var(--accent) !important;
+
+    color: var(--code-bg) !important;
+}
+
+/* Дні сусідніх місяців */
+.create-writer__calendar
+.react-datepicker__day--outside-month {
+    color: var(--accent-bg) !important;
+}
+
+
+/* Стрілки */
+.create-writer__calendar
+.react-datepicker__navigation-icon::before {
+    border-color: var(--accent) !important;
+}
+
+
+/* Hover стрілок */
+.create-writer__calendar
+.react-datepicker__navigation:hover
+.react-datepicker__navigation-icon::before {
+    border-color: var(--text) !important;
+}
+
+.react-datepicker-popper {
+    z-index: 100;
+}
+
+/* Трикутник біля календаря */
+.create-writer__calendar
+.react-datepicker__triangle {
+    display: none;
+}
+
+.create-writer__submit-btn {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background-color: var(--border);
+    color: var(--text);
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: "SanghaKali", serif;
+    font-size: 1.4rem;
+
+    cursor: pointer;
+
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.create-writer__submit-btn:hover {
+    background-color: var(--accent);
+    color: var(--code-bg);
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 0 15px var(--border);
+}
+
+.create-writer__submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .create-writer__title,
+    .create-writer__form {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .create-writer__title {
+        font-size: 1.6rem;
+    }
+
+    .create-writer__form {
+        padding: 20px;
+    }
+
+    .create-writer__submit-btn {
+        width: 100%;
+    }
+}

@@ -1,0 +1,239 @@
+.contacts-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 50px;
+    animation: fadeIn 0.8s ease;
+}
+
+.contacts-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Заголовок */
+
+.contacts-title {
+    margin: 40px 100px 20px 100px;
+    font-family: "SanghaKali", serif;
+    color: var(--accent);
+    font-size: 3rem;
+    text-shadow: 0 0 10px var(--border);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+}
+
+/* Опис */
+
+.contacts-description {
+    margin: 0 100px 30px 100px;
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Форма */
+
+.contacts-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+
+    margin: 0 100px;
+    padding: 30px;
+
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+/* Група */
+
+.contacts-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Label */
+
+.contacts-label {
+    font-family: "Memory", serif;
+    color: var(--accent);
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px var(--border);
+}
+
+/* Input */
+
+.contacts-input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 15px;
+
+    background-color: var(--accent-bg);
+
+    border: 1px solid var(--accent-border);
+    border-right: 2px solid var(--accent-border);
+
+    border-radius: 8px;
+
+    color: var(--text);
+
+    font-family: "Memory", serif;
+    font-size: 1rem;
+
+    outline: none;
+
+    transition: all 0.3s ease;
+}
+
+.contacts-input::placeholder {
+    color: var(--accent);
+}
+
+.contacts-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(160, 115, 94, 0.3);
+}
+
+/* Textarea */
+
+.contacts-textarea {
+    width: 100%;
+    min-height: 200px;
+
+    box-sizing: border-box;
+
+    padding: 12px 15px;
+
+    background-color: var(--accent-bg);
+
+    border: 1px solid var(--accent-border);
+    border-right: 2px solid var(--accent-border);
+
+    border-radius: 8px;
+
+    color: var(--text);
+
+    font-family: "Memory", serif;
+    font-size: 1rem;
+
+    outline: none;
+
+    resize: vertical;
+
+    transition: all 0.3s ease;
+}
+
+.contacts-textarea::placeholder {
+    color: var(--accent);
+}
+
+.contacts-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(160, 115, 94, 0.3);
+}
+
+/* Кнопка */
+
+.contacts-submit {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background-color: var(--border);
+
+    color: var(--text);
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: "SanghaKali", serif;
+    font-size: 1.4rem;
+
+    cursor: pointer;
+
+    transition:
+        all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.contacts-submit:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--code-bg);
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 0 15px var(--border);
+}
+
+.contacts-submit:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.contacts-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Адаптивність */
+
+@media (max-width: 768px) {
+
+    .contacts-title,
+    .contacts-description,
+    .contacts-form {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .contacts-title {
+        font-size: 2rem;
+        margin-top: 30px;
+    }
+
+    .contacts-description {
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .contacts-form {
+        padding: 20px;
+    }
+
+    .contacts-submit {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .contacts-title {
+        font-size: 1.7rem;
+    }
+
+    .contacts-form {
+        padding: 15px;
+    }
+
+    .contacts-input,
+    .contacts-textarea {
+        font-size: 0.95rem;
+    }
+
+    .contacts-textarea {
+        min-height: 160px;
+    }
+
+    .contacts-submit {
+        font-size: 1.2rem;
+    }
+}

@@ -1,0 +1,229 @@
+/* clear browser styles */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100%;
+    overflow-y: auto;
+}
+
+.main-page {
+    width: 100%;
+    min-height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes dropFromTop {
+    from {
+        transform: translateY(-80px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.welcome-banner {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    background-image: url('/banner_v2.png');
+    background-position: center;
+    background-size: cover;
+    /* Властивість для розмиття зображення для хром та інших браузерів */
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent);
+    mask-image: linear-gradient(to bottom, black 80%, transparent);
+
+    animation: dropFromTop 0.6s ease-out;
+}
+
+.gradient {
+    position: absolute;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(to bottom, var(--accent-border), transparent);
+    z-index: -1;
+}
+
+@keyframes fadeIn {
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.welcome-text {
+    max-width: 640px;
+    padding: 60px 10px 10px 30px;
+}
+
+.welcome-text h1 {
+    margin: 0;
+    color: var(--text-contrast);
+    text-shadow: 0 0 10px var(--border);
+    font-size: 4rem;
+    line-height: 1.2;
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    animation: zoomIn 0.5s ease;
+}
+
+.welcome-subtitle {
+    font-family: "Memory", 'Times New Roman', Times, serif;
+    color: var(--text-contrast);
+    text-shadow: 0 0 10px var(--border);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-top: 10px;
+    animation: zoomIn 1s ease;
+}
+
+@keyframes dropFromBottom {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+#dragon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 70px;
+    width: 100%;
+    height: auto;
+    max-width: 550px;
+    display: block;
+    /* width of block is width of display */
+    object-fit: contain;
+
+    z-index: -1;
+    opacity: 0;
+    animation: dropFromBottom 3s ease forwards;
+}
+
+@keyframes glowIcon {
+    0% {
+        text-shadow: 0 0 5px var(--code-bg);
+    }
+
+    50% {
+        text-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        text-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+@keyframes zoomDrop {
+    from {
+        transform: scale(0.9) translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+}
+
+.news-section, .top-section {
+    padding: 10px 30px;
+    background-color: var(--bg);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    animation: zoomDrop 1.3s ease forwards;
+}
+
+.news-title, .top-title {
+    margin: 0;
+    padding-top: 20px;
+    color: var(--accent);
+    text-shadow: 0 0 10px var(--border);
+    font-size: 3rem;
+    line-height: 1.2;
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    text-align: center;
+    animation: zoomDrop 1s ease;
+}
+
+/* Адаптивність для малих екранів */
+@media screen and (max-width: 768px) {
+    .welcome-banner {
+        height: 400px;
+    }
+
+    .welcome-text {
+        max-width: 100%;
+        padding: 60px 15px 10px 15px
+    }
+
+    .welcome-text h1 {
+        color: var(--text);
+        font-size: clamp(35px, 2.7vw, 45px);
+        text-align: center;
+    }
+
+    .welcome-subtitle {
+        color: var(--text);
+        text-shadow: 0 0 5px var(--text-contrast);
+        -webkit-text-stroke: 1px var(--text);
+        font-size: clamp(12px, 2.4vw, 17px);
+        text-align: center;
+    }
+
+    @keyframes dropFromBottom {
+        from {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0px);
+            opacity: 0.7;
+        }
+    }
+
+    #dragon {
+        position: absolute;
+        margin-left: 200px;
+        width: 100%;
+        height: auto;
+        top: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    .news-title, .top-title {
+        font-size: clamp(35px, 2.7vw, 45px);
+    }
+
+    .news-section, .top-section {
+        padding: 10px;
+        gap: 10px;
+    }
+}

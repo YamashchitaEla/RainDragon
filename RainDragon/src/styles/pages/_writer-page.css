@@ -1,0 +1,241 @@
+.writer-page {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+
+    50% {
+        box-shadow:
+            0 0 20px var(--code-bg),
+            0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+/* Хедер автора */
+.writer-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+    margin: 40px 100px 20px 100px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.writer-header__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.writer-header__name {
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    font-size: 2.2rem;
+    margin: 0 0 10px 0;
+    text-shadow: 0 0 5px var(--border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.writer-header__details {
+    font-family: "Memory", serif;
+    color: var(--accent);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.writer-header__details p {
+    margin: 0;
+}
+
+.writer-header__details i {
+    margin-right: 8px;
+    color: var(--border);
+}
+
+.page-writer__admin-controls {
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.page-writer__control-btn {
+    border: none;
+    width: 40px;
+    height: 40px;
+    padding: 3px 10px;
+    margin: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 4px;
+    background-color: var(--border);
+    color: var(--text);
+
+    font-family: "SanghaKali", "Times New Roman", Times, serif;
+    font-size: 1.3rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.30s ease,
+        filter 0.30s ease,
+        transform 0.30s ease;
+}
+
+.page-writer__control-btn:hover {
+    transform: scale(1.1);
+}
+
+.page-writer__control-btn--edit:hover,
+.page-writer__control-btn--delete:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+}
+
+.page-writer__control-btn--edit:active,
+.page-writer__control-btn--delete:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.writer-content {
+    display: flex;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px 100px 20px 100px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.writer-content__title {
+    width: 100%;
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 5px var(--border);
+}
+
+.writer-content__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    animation: zoomDrop 1s ease-out;
+}
+
+.writer-content__empty {
+    font-family: "SanghaKali", serif;
+
+    margin: 50px 100px;
+    padding: 40px;
+
+    text-align: center;
+
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .writer-header {
+        margin: 20px;
+        padding: 20px;
+
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .writer-header__info {
+        width: 100%;
+    }
+
+    .writer-header__name {
+        justify-content: center;
+        font-size: clamp(35px, 7vw, 45px);
+        margin-bottom: 10px;
+    }
+
+    .writer-header__details {
+        font-size: clamp(12px, 2.4vw, 17px);
+        text-align: center;
+    }
+
+    .page-writer__admin-controls {
+        gap: 6px;
+        padding: 7px;
+    }
+
+    .page-writer__control-btn {
+        flex: 0 1 auto;
+        min-width: 0;
+        width: auto;
+
+        margin: 0;
+        padding: 7px 8px;
+
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+
+    .writer-content {
+        margin: 20px;
+    }
+
+    .writer-content__title {
+        font-size: clamp(1.5rem, 5vw, 1.8rem);
+        margin-bottom: 20px;
+    }
+
+    .writer-content__list {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .writer-content__empty {
+        margin: 30px 0;
+        padding: 30px 20px;
+        font-size: 1.2rem;
+    }
+}

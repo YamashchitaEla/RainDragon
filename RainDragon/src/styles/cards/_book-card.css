@@ -1,0 +1,85 @@
+.book-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--code-bg);
+    border-radius: 4px;
+    padding: 20px;
+    margin: 10px;
+
+    width: clamp(150px, 30vw, 250px);
+    aspect-ratio: 5 / 7;
+
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    transition: background-color 0.3s ease, filter 0.3s ease;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+.book-card:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-card:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.book-preview {
+    width: 100%;
+    aspect-ratio: 5 / 7;
+    object-fit: cover;
+    object-position: center;
+}
+
+.book-title {
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+    font-size: clamp(1rem, 2px, 1.5rem);
+    margin: 5px 0 0;
+}
+
+.book-author {
+    font-family: "Memory", 'Times New Roman', Times, serif;
+    color: var(--accent);
+    text-shadow: 0 0 5px var(--border);
+    font-size: clamp(0.9rem, 2px, 1.2rem);
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .book-card {
+        width: calc(50% - 5px);
+        max-width: 180px;
+        margin: 0;
+        padding: 10px;
+    }
+
+    .book-preview {
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+    }
+}

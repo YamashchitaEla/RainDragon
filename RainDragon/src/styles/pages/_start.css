@@ -1,0 +1,124 @@
+/* clear browser styles */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    /* Remove scroll (minimal size od device)*/
+}
+
+.start-page {
+    width: 100%;
+    min-height: 100vh;
+            /*background-image: url('/start_bg.jpg');*/
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* - center */
+    align-items: center;
+    /* | center */
+}
+
+@keyframes blurSlow {
+    100% {
+        filter: blur(4px);
+    }
+}
+
+.background {
+    position: fixed;
+    top: 0;
+    left: -10;
+    width: 110%;
+    height: 110%;
+
+    background-image: url('/start_bg.png') !important;
+    background-position: center;
+    background-size: cover;
+    animation: blurSlow 4s ease forwards;
+
+    z-index: -1;
+}
+
+@keyframes fadeIn {
+    100% {
+        opacity: 1;
+    }
+}
+
+#logo-start {
+    width: 40%;
+    height: auto;
+    max-width: 200px;
+    display: block;
+    /* width of block is width of display */
+    object-fit: contain;
+
+    opacity: 0;
+    animation: fadeIn 3s ease forwards;
+}
+
+.buttons {
+    width: min(480px, 100%);
+    display: flex;
+    justify-content: center;
+    /* - center */
+    align-items: center;
+    /* | center */
+    flex-wrap: wrap;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg)
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+.button-start {
+    border-width: 0px;
+    margin: 10px;
+    min-width: 120px;
+    max-width: 240px;
+    background-color: var(--code-bg);
+    border-radius: 4px;
+
+    font-size: clamp(14px, 2.4vw, 18px);
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+
+    text-align: center;
+    padding: 10px 16px;
+    box-sizing: border-box;
+
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.button-start:hover {
+    background-color: var(--bg);
+    animation: glow 1.5s infinite;
+    color: var(--accent);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.button-start:active {
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}

@@ -1,0 +1,590 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100%;
+    overflow-y: auto;
+}
+
+.no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.book-chapter{
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.book-chapter__chapter {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* важливо */
+    margin: 10px 50px 10px 50px;
+}
+
+.book-chapter__chapter-text_parameters, .book-chapter__chapter-text_table__bookmarks {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg)
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+.book-chapter__text-button {
+    height: 40px;
+    border-width: 0px;
+    background-color: var(--border);
+    padding: 3px 10px 3px 10px;
+    border-radius: 4px;
+    font-size: 1.3rem;
+    line-height: 1;
+    margin: 5px;
+
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
+
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__text-button:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__text-button:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.book-chapter__text{
+    padding: 20px 50px 20px 50px;
+}
+
+.book-chapter__text h1 {
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    font-size: 2.5rem;
+    line-height: 1;
+    margin: 0 0 5px 0;
+    padding: 0;
+}
+
+.book-chapter__text p {
+    font-size: var(--font-size);
+    line-height: 1.5;
+    margin: 12px 0 12px 0;
+}
+
+/* СТИЛІ ТЕМИ */
+.book-chapter__text.light {
+    background-color: var(--bg);
+}
+
+.book-chapter__text.light h1 {
+    color: var(--text);
+    text-shadow: 0 0 5px var(--text);
+}
+
+.book-chapter__text.light p {
+    color: var(--text);
+}
+
+/*---------------------------*/
+
+.book-chapter__text.dark {
+    background-color: var(--text);
+}
+
+.book-chapter__text.dark h1 {
+    color: var(--bg);
+    text-shadow: 0 0 5px var(--bg);
+}
+
+.book-chapter__text.dark p {
+    color: var(--bg);
+}
+
+/*---------------------------*/
+
+.book-chapter__text.dragon {
+    background-color: var(--code-bg);
+}
+
+.book-chapter__text.dragon h1 {
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+}
+
+.book-chapter__text.dragon p {
+    color: var(--accent);
+}
+
+
+/* СТИЛІ ШРИФТІВ */
+.book-chapter__text.Memory p {
+    font-family: "Memory", 'Times New Roman', Times, serif;
+}
+
+.book-chapter__text.Times New Roman p {
+    font-family: "Times New Roman";
+}
+
+.book-chapter__text.Arial p {
+    font-family: "Arial";
+}
+
+.book-chapter__chapter-top {
+    width: 100%
+}
+
+.book-chapter__toc-panel {
+    position: fixed;
+    top: 0;
+    left: -350px;
+    height: 100%;
+    width: 300px;
+    display: flex;
+    background-color: var(--accent-bg);
+    border-right: 2px solid var(--accent-border);
+    backdrop-filter: blur(10px);
+    border-radius: 0 4px 4px 0;
+    flex-direction: column;
+    padding: 15px 0 15px 0px;
+    padding-bottom: 10px;
+
+    /* анімація коли змінюється властивість left */
+    transition: left 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+}
+
+.book-chapter__toc-panel.open {
+    left: 0; /* коли відкрито */
+}
+
+/* Шапка для змісту */
+.book-chapter__panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--accent-border);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.book-chapter__panel-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    /* Використовуємо ваш шрифт для заголовків */
+    font-family: "SanghaKali", serif; 
+}
+
+/* Список розділів (щоб він мав внутрішній скрол, якщо зміст довгий) */
+.book-chapter__toc-list {
+    overflow-y: auto;
+    height: calc(100% - 60px); /* Віднімаємо висоту шапки */
+}
+
+/* Кнопка закриття (спільний стиль) */
+.close-sidebar-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.close-sidebar-btn:hover {
+    color: var(--accent);
+}
+
+/*СТИЛІ СКРОЛЛБАРА ДЛЯ ПАНЕЛІ ЗМІСТУ*/
+.book-chapter__toc-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.book-chapter__toc-panel::-webkit-scrollbar-track {
+    background: var(--border);
+}
+
+.book-chapter__toc-panel::-webkit-scrollbar-thumb {
+    background: var(--accent-border);
+    border-radius: 4px;
+}
+
+.book-chapter__toc-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-bg);
+}
+
+.book-chapter__chapter-top_item {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__chapter-top_item:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__chapter-top_item:active {
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.book-chapter__chapter-top_item:last-child {
+    margin-bottom: 30px; /* Або будь-яке інше значення, яке вам подобається */
+}
+
+/** СТИЛІ ПАНЕЛІ ЗАКЛАДОК */
+.book-chapter__bookmarks-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    height: 100%;
+    display: flex;
+    background-color: var(--accent-bg);
+    border-right: 2px solid var(--accent-border);
+    backdrop-filter: blur(10px);
+    border-radius: 0 4px 4px 0;
+    flex-direction: column;
+    padding: 15px 0 15px 0px;
+    padding-bottom: 10px;
+
+    /* анімація коли змінюється властивість right */
+    transition: right 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+}
+
+.book-chapter__bookmarks-panel.open {
+    right: 0;
+}
+/*СТИЛІ СКРОЛЛБАРА ДЛЯ ПАНЕЛІ ЗАКЛАДОК*/
+.book-chapter__bookmarks-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.book-chapter__bookmarks-panel::-webkit-scrollbar-track {
+    background: var(--border);
+}
+
+.book-chapter__bookmarks-panel::-webkit-scrollbar-thumb {
+    background: var(--accent-border);
+    border-radius: 4px;
+}
+
+.book-chapter__bookmarks-panel__header {
+    padding: 10px 20px;
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+}
+
+.book-chapter__bookmarks-panel__item {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__bookmarks-panel__item:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.book-chapter__bookmarks-panel__item:active {
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.book-chapter__bookmarks-panel__item:last-child {
+    margin-bottom: 30px; /* Або будь-яке інше значення, яке вам подобається */
+}
+
+.book-chapter__bookmarks-panel__item-text {
+    font-weight: bold;
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+}
+
+.book-chapter__bookmarks-panel__item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+}
+
+.book-chapter__bookmarks-panel__item-chapter-name {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-family: "Memory", 'Times New Roman', Times, serif;
+}
+
+.book-chapter__bookmarks-panel__item-delete {
+    background: none;
+    border: none;
+    color: #ff7675;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: color 0.3s ease;
+}
+
+.book-chapter__bookmarks-panel__item-delete:hover {
+    color: #d63031;
+}
+
+.book-chapter__bookmarks-panel__item-delete:active {
+    color: #b00020;
+}
+
+.book-chapter__bookmarks-panel__close {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: color 0.3s ease;
+}
+
+/* Підсвічування закладеного абзацу */
+.selectable-para.is-bookmarked {
+    border-left: 3px solid #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+    padding-left: 10px;
+}
+
+.bookmark-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.selectable-para {
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.selectable-para:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Задній фон, який блокує кліки по тексту, поки відкрите меню */
+.book-chapter__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Напівпрозорий чорний */
+    backdrop-filter: blur(2px);
+    z-index: 998; /* На 1 менше ніж у панелей */
+}
+
+/* Шапка всередині панелей */
+.book-chapter__panel-header, .book-chapter__bookmarks-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--accent-border);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.book-chapter__panel-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-family: "SanghaKali", serif;
+}
+
+/* Кнопка закриття "X" */
+.close-panel-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s;
+}
+
+.close-panel-btn:hover {
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+/* МЕДІА-ЗАПИТИ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ */
+@media (max-width: 768px) {
+    .book-chapter__toc-panel, 
+    .book-chapter__bookmarks-panel {
+        z-index: 999; /* Панель має бути вище за все */
+    }
+
+    /* Зменшуємо зовнішні відступи контейнера */
+    .book-chapter__chapter {
+        margin: 5px 10px;
+    }
+
+    /* Зменшуємо внутрішні відступи тексту, щоб було більше місця для читання */
+    .book-chapter__text {
+        padding: 15px 15px;
+    }
+
+    /* Адаптуємо заголовок */
+    .book-chapter__text h1 {
+        font-size: 1.8rem;
+        word-wrap: break-word;
+    }
+
+    /* Налаштування панелей (Зміст та Закладки) */
+    .book-chapter__toc-panel, 
+    .book-chapter__bookmarks-panel {
+        width: 85%; /* На мобільних панель займає майже весь екран */
+        max-width: 320px;
+    }
+
+    /* Щоб панель закладок виїжджала правильно */
+    .book-chapter__bookmarks-panel {
+        right: -90%;
+    }
+    
+    .book-chapter__bookmarks-panel.open {
+        right: 0;
+    }
+
+    /* Кнопки параметрів: дозволяємо перенос, якщо їх забагато в ряд */ 
+    .book-chapter__chapter-text_table__bookmarks {
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .book-chapter__chapter-text_table__bookmarks {
+        gap: 4px;
+        justify-content: space-between;
+        width: 100%;
+        margin: 0;
+    }
+
+    .book-chapter__chapter-text_table__bookmarks .book-chapter__text-button {
+        padding: 7px 8px;
+    }
+
+    .book-chapter__chapter-text_parameters, .book-chapter__chapter-text_table__bookmarks {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        overflow: hidden;
+        padding: 7px 0px;
+        margin: 0;
+    }
+
+    .book-chapter__text-button {
+        flex: 0 1 auto;
+        min-width: 0;
+        width: auto;
+        margin: 0;
+        padding: 7px 8px;
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+
+    /* Кнопка закладки біля абзацу (робимо її більшою) */
+    .bookmark-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            background-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .bookmark-btn:hover {
+        background: #d63031;
+        box-shadow:0 0 8px rgba(231, 76, 60, 0.7);
+        transform: scale(1.08);
+    }
+
+    .bookmark-btn:active {
+        transform: scale(0.92);
+    }
+}
+
+/* Додаткові правки для зовсім маленьких екранів (iPhone SE тощо) */
+@media (max-width: 400px) {
+    .book-chapter__text p {
+        line-height: 1.4;
+        margin: 10px 0;
+    }
+
+    .book-chapter__text-button {
+        font-size: 0.9rem;
+        padding: 6px 8px;
+    }
+}

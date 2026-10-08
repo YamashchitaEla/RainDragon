@@ -1,0 +1,609 @@
+.page-post {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.page-post__info {
+    margin: 20px 100px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-post__info__preview {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    background-color: var(--bg);
+}
+
+.page-post__info__post-preview {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    object-fit: cover;
+    object-position: center;
+
+    transition: transform 0.5s ease;
+}
+
+.page-post__info__preview:hover .page-post__info__post-preview {
+    transform: scale(1.03);
+}
+
+.page-post__info__preview-overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    padding: 40px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.6) 40%,
+            rgba(0, 0, 0, 0.05) 80%,
+            transparent 100%
+        );
+}
+
+.page-post__info__post-title {
+    margin: 0 0 10px 0;
+    padding: 0;
+    max-width: 900px;
+
+    font-family: "SanghaKali", "Times New Roman", Times, serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border), 0 2px 10px rgba(0, 0, 0, 0.8);
+
+    overflow-wrap: anywhere;
+}
+
+.page-post__info__short-description {
+    margin: 0;
+    max-width: 850px;
+
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 1.05rem;
+    line-height: 1.5;
+
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+
+    overflow-wrap: anywhere;
+}
+
+.page-post__info__info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 8px 25px;
+
+    margin: 15px 0 0;
+    padding: 0 5px;
+}
+
+.page-post__info__post-info {
+    margin: 0;
+
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+    color: var(--accent);
+
+    text-shadow: 0 0 5px var(--border);
+}
+
+.page-post__info__author {
+    background-color: var(--border);
+    padding: 3px 3px 3px 3px;
+    border-radius: 4px;
+    font-size: 1.3rem;
+    line-height: 1;
+
+    display: inline-block;
+
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-post__info__author:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-post__info__author:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.page-post__info__tags {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.page-post__info__tags_text {
+    border: none;
+    cursor: pointer;
+    background-color: var(--border);
+    padding: 3px 5px 3px 5px;
+    border-radius: 5px;
+
+    font-family: "Memory", 'Times New Roman', Times, serif;
+    color: var(--accent);
+    text-shadow: 0 0 5px var(--border);
+
+    text-align: justify;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 5px 0 5px 0;
+    word-break: break-word;
+}
+
+.page-post__info__tags_text:hover {
+    background-color: var(--bg);
+    color: var(--text);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--code-bg);
+}
+
+.page-post__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.page-post__control-btn {
+    border-width: 0px;
+    width: 40px;
+    height: 40px;
+    padding: 3px 10px 3px 10px;
+    border-radius: 4px;
+    font-size: 1.3rem;
+    line-height: 1;
+    margin: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+
+    background-color: var(--border);
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    cursor: pointer;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-post__control-btn:hover {
+    transform: scale(1.1);
+}
+
+.page-post__control-btn--edit:hover,
+.page-post__control-btn--delete:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-post__control-btn--edit:active,
+.page-post__control-btn--delete:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.page-post__content {
+    width: calc(100% - 200px);
+    max-width: 1100px;
+
+    margin: 0px 100px 0px 100px;
+    padding: 0 0 20px;
+
+    box-sizing: border-box;
+}
+
+/*
+   Стилі для HTML, який генерує PostContent.
+   Вони дозволяють нормально відображати
+   заголовки, текст, списки, картинки тощо.
+*/
+
+/* Абзаци */
+.page-post__content p {
+    margin: 0 0 15px;
+    color: var(--text);
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: justify;
+    overflow-wrap: anywhere;
+}
+
+/* Заголовки */
+.page-post__content h1,
+.page-post__content h2,
+.page-post__content h3,
+.page-post__content h4,
+.page-post__content h5,
+.page-post__content h6 {
+    margin: 25px 0 15px;
+    color: var(--accent);
+    font-family: "SanghaKali", "Times New Roman", Times, serif;
+    line-height: 1.3;
+    text-shadow: 0 0 8px var(--border);
+    overflow-wrap: anywhere;
+}
+
+.page-post__content h1 {
+    font-size: 2.2rem;
+}
+
+.page-post__content h2 {
+    font-size: 1.8rem;
+}
+
+.page-post__content h3 {
+    font-size: 1.5rem;
+}
+
+.page-post__content h4 {
+    font-size: 1.3rem;
+}
+
+.page-post__content h5 {
+    font-size: 1.15rem;
+}
+
+.page-post__content h6 {
+    font-size: 1rem;
+}
+
+/* Жирний */
+.page-post__content strong {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* Курсив */
+.page-post__content em {
+    color: var(--text);
+}
+
+/* Підкреслення */
+.page-post__content u {
+    text-decoration-color: var(--accent);
+}
+
+/* Закреслення */
+.page-post__content s {
+    opacity: 0.7;
+}
+
+/* Маркований та нумерований список */
+.page-post__content ul,
+.page-post__content ol {
+    margin: 10px 0 20px;
+    padding-left: 25px;
+    color: var(--text);
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Елементи списку */
+.page-post__content li {
+    margin-bottom: 6px;
+    padding-left: 5px;
+}
+
+/* Посилання */
+.page-post__content a {
+    color: var(--accent);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.page-post__content a:hover {
+    color: var(--text);
+    text-decoration: none;
+    text-shadow:
+        0 0 5px var(--accent),
+        0 0 10px var(--border);
+}
+
+/* Картинки */
+.page-post__content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 30px auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    object-fit: contain;
+}
+
+/* Цитата */
+.page-post__content blockquote {
+    margin: 25px 0;
+    padding: 15px 20px;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Inline code */
+.page-post__content code {
+    padding: 2px 5px;
+    border-radius: 4px;
+    background-color: var(--bg);
+    color: var(--accent);
+    font-family: monospace;
+}
+
+/* Горизонтальна лінія */
+.page-post__content hr {
+    margin: 35px 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 0 5px var(--border);
+}
+
+.page-post__comments {
+    margin: 40px 100px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.page-post__comments-title {
+    margin: 0 0 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    font-family: "SanghaKali", serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    text-shadow: 0 0 5px var(--border);
+}
+
+
+.page-post__comment-create {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.page-post__comment__input {
+    width: 100%;
+    min-height: 100px;
+    box-sizing: border-box;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    resize: vertical;
+    background-color: var(--code-bg);
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.page-post__comment__input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--border);
+}
+
+.page-post__comment__input::placeholder {
+    color: var(--accent);
+    opacity: 0.5;
+}
+
+.page-post__comment__send-main {
+    align-self: flex-end;
+    padding: 10px 25px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background-color: var(--border);
+    color: var(--text);
+    font-family: "SanghaKali", serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-post__comment__send-main:hover {
+    background-color: var(--accent);
+    color: var(--code-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.page-post__comment__send-main:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .page-post__info {
+        margin: 10px;
+    }
+
+    .page-post__info__preview {
+        height: 250px;
+        border-radius: 8px;
+    }
+
+    .page-post__info__preview-overlay {
+        padding: 20px;
+    }
+
+    .page-post__info__post-title {
+        font-size: 1.7rem;
+        line-height: 1.2;
+    }
+
+    .page-post__info__short-description {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        overflow: hidden;
+    }
+
+    .page-post__info__info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-top: 12px;
+    }
+
+    .page-post__info__post-info {
+        font-size: 0.9rem;
+    }
+
+    .page-post__info__author {
+        font-size: 1rem;
+    }
+
+    .page-post__info__tags {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .page-post__info__tags_text {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+
+    .page-post__actions {
+        justify-content: flex-end;
+        margin-top: 12px;
+    }
+
+    .page-post__control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .page-post__content {
+        width: calc(100% - 20px);
+        max-width: none;
+        margin: 10px;
+    }
+
+    .page-post__content p {
+        font-size: 0.95rem;
+        line-height: 1.65;
+        text-align: left;
+    }
+
+    .page-post__content h1 {
+        font-size: 1.7rem;
+    }
+
+    .page-post__content h2 {
+        font-size: 1.5rem;
+    }
+
+    .page-post__content h3 {
+        font-size: 1.3rem;
+    }
+
+    .page-post__content ul,
+    .page-post__content ol {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        padding-left: 25px;
+    }
+
+    .page-post__content blockquote {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+
+    .page-post__content img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 30px auto;
+        border-radius: 8px;
+        object-fit: contain;
+    }
+
+    /* Коментарі */
+    .page-post__comments {
+        margin: 25px 20px;
+    }
+
+    .page-post__comments-title {
+        font-size: 1.4rem;
+    }
+
+    .page-post__comment__input {
+        min-height: 90px;
+        font-size: 0.9rem;
+    }
+
+    .page-post__comment__send-main {
+        width: 100%;
+        font-size: 1rem;
+    }
+}

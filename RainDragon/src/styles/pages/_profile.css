@@ -1,0 +1,388 @@
+.profile-page {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.no-results {
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-style: italic;
+    margin-top: 50px;
+    text-align: center;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--code-bg)
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--code-bg), 
+        0 0 40px var(--code-bg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--code-bg);
+    }
+}
+
+/* Хедер профілю (Аватар + Інфо) */
+.profile-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+    margin: 40px 100px 20px 100px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.profile-header__avatar-container {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+.profile-header__avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Круглий аватар */
+    border: 3px solid var(--border);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-header__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.profile-header__nickname {
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    font-size: 2.2rem;
+    margin: 0 0 10px 0;
+    text-shadow: 0 0 5px var(--border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-badge {
+    color: var(--border);
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 8px var(--bg));
+}
+
+.profile-header__about {
+    font-family: "Memory", serif;
+    color: var(--accent);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+.page-profile__controls {
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+/* Загальний стиль для маленьких кнопок керування */
+.page-profile__control-btn {
+    border-width: 0px;
+    width: 40px;
+    height: 40px;
+    padding: 3px 10px 3px 10px;
+    border-radius: 4px;
+    font-size: 1.3rem;
+    line-height: 1;
+    margin: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+
+    background-color: var(--border);
+    color: var(--text);
+    font-family: "SanghaKali", 'Times New Roman', Times, serif;
+    cursor: pointer;
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-profile__control-btn:hover {
+    transform: scale(1.1);
+}
+
+.page-profile__control-btn--edit:hover,
+.page-profile__control-btn--exit:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-profile__control-btn--edit:active,  
+.page-profile__control-btn--exit:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+/* Контент профілю */
+.profile-content {
+    display: flex;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px 100px 20px 100px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.profile-content__title {
+    width: 100%;
+    font-family: "SanghaKali", serif;
+    color: var(--text);
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 5px var(--border);
+}
+
+/* Повідомлення про приватність */
+.profile-content__private {
+    font-family: "SanghaKali", serif;
+    margin: 50px 100px;
+    padding: 40px;
+    text-align: center;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+
+.profile-content__empty {
+    font-family: "SanghaKali", serif;
+    margin: 50px 100px;
+    padding: 40px;
+    text-align: center;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+
+.profile-category {
+    width: 100%;
+}
+
+.profile-category__name {
+    font-family: "SanghaKali", serif;
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 10px;
+    border-left: 4px solid var(--border);
+}
+
+.profile-category__name i {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.profile-content__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    animation: zoomDrop 1s ease-out;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.avatar-upload-label {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--border);
+    color: var(--code-bg);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid var(--code-bg);
+    transition: 0.3s;
+}
+
+.avatar-upload-label:hover {
+    transform: scale(1.1);
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.avatar-upload-label:active{
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
+}
+
+.edit-nickname-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.8rem;
+    font-family: "SanghaKali", serif;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.profile-edit-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-header__textarea {
+    min-height: 120px;
+    padding: 12px 15px;
+    background-color: var(--accent-bg);
+    border-right: 2px solid var(--accent-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: "Memory", serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.profile-header__textarea::placeholder {
+    color: var(--accent);
+}
+
+.profile-header__save-btn {
+    display: inline-block;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    background-color: var(--accent); /* Використовуємо акцентний колір */
+    color: var(--code-bg);
+    border: none;
+    border-radius: 8px;
+    font-family: "SanghaKali", serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-right: 20px;
+}
+
+.profile-header__save-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 20px var(--border);
+    filter: brightness(1.1);
+}
+
+.profile-header__cancel-btn {
+    display: inline-block;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    background-color: var(--border);
+    color: var(--code-bg);
+    border: none;
+    border-radius: 8px;
+    font-family: "SanghaKali", serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-header__cancel-btn:hover {
+    background-color: var(--bg);
+    box-shadow: 0 6px 20px var(--bg);
+    color: var(--accent);
+    transform: translateY(-3px) scale(1.02);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .profile-header {
+        margin: 20px;
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .profile-header__avatar-container,
+    .avatar-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-header__nickname {
+        justify-content: center;
+        font-size: clamp(35px, 2.7vw, 45px);
+    }
+
+    .profile-header__about{
+        font-size: clamp(12px, 2.4vw, 17px);
+        text-align: center;
+    }
+
+    .profile-header__save-btn{
+        margin-right: 0;
+    }
+
+    .profile-content {
+        margin: 20px;
+    }
+
+    .profile-content__list {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .page-profile__control-btn{
+        flex: 0 1 auto;
+        min-width: 0;
+        width: auto;
+        margin: 0;
+        padding: 7px 8px;
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+}

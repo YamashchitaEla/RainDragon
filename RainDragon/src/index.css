@@ -1,0 +1,64 @@
+html, 
+body {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#root {
+    width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+
+}
+
+
+:root {
+  --text: #000000;
+  --text-contrast: rgb(184, 255, 222);
+  --text-h: #08060d;
+  --bg: #d3eae3;
+  --border: #69a480;
+  --code-bg: #acdab6;
+  --accent: #124326;
+  --error: #B00020;
+  --accent-bg: rgba(25, 104, 59, 0.339);
+  --accent-border: rgba(27, 130, 80, 0.5);
+  --social-bg: rgba(13, 63, 41, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--code-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@font-face {
+  font-family: SanghaKali;
+  src: local(SanghaKali), url("/SanghaKali-Regular.ttf");
+}
+
+@font-face {
+  font-family: Memory;
+  src: local(Memory), url("/UAFMemory-CompactRegular.otf");
+}
