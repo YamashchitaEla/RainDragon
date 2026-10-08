@@ -1,2 +1,4 @@
-.docx
-.pptx
+*.docx
+*.doc
+*.pptx
+*.pdf
