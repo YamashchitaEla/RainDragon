@@ -1,17 +1,17 @@
-# Ігноруємо залежності
-RainDragon/node_modules/
-ServerRD/node_modules/
-
-# Ігноруємо типи файлів
-*.env
+# Файли
 *.docx
 *.doc
 *.pptx
+*.ppt
 *.pdf
 
-# Ігноруємо папки
+# Директорії
+db/                  
+diagram/             
+screenshots/         
+source/     
 пояснення/
-db/
-diagram/
-screenshots/
-source/
+
+# Ігноруємо залежності
+RainDragon/node_modules/
+ServerRD/node_modules/
