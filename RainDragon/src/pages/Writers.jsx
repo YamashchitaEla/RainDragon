@@ -22,9 +22,7 @@ function Writers() {
     useEffect(() => {
         const fetchWriters = async () => {
             try {
-                const res = await requestWithRefresh(
-                    "http://localhost:5000/api/writers"
-                );
+                const res = await requestWithRefresh("http://localhost:5000/api/writers");
                 const data = await res.json();
                 if (res.ok) {
                     setAllWriters(data.writers || []);

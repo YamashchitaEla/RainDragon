@@ -72,7 +72,7 @@ const storage_posts_previews = new CloudinaryStorage({
     },
 });
 
-// Інстанси multer
+// Створюємо два окремих інстанси multer
 export const uploadAvatar = multer({ storage: storage_avatars });
 export const uploadBook = multer({ storage: storage_books });
 export const uploadPostPreview = multer({ storage: storage_posts_previews });

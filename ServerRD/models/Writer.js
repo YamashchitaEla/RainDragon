@@ -8,7 +8,6 @@ export class Writer {
             full_name = null,
             birthday = null
         } = data || {};
-        
         Object.assign(this, { id, full_name, birthday });
     }
 
@@ -17,7 +16,6 @@ export class Writer {
             `SELECT id, full_name, birthday::TEXT 
             FROM writer`
         );
-
         return result.rows.map(row => new Writer(row));
     }
 
@@ -28,7 +26,6 @@ export class Writer {
             WHERE id = $1`, 
             [id]
         );
-
         return result.rows[0] ? new Writer(result.rows[0]) : null;
     }
 
@@ -41,7 +38,6 @@ export class Writer {
             WHERE b.id = $1`, 
             [bookId]
         );
-
         return result.rows.map(row => new Writer(row));
     }
 
@@ -58,7 +54,6 @@ export class Writer {
 			GROUP BY b.id, b.ukrainian_name, b.preview`, 
             [writerId]
         );
-
         return result.rows.map(row => (new Book(row)));
     }
 
@@ -70,14 +65,13 @@ export class Writer {
         const values = [];
         const valueStrings = writers.map((writerId, index) => {
             values.push(bookId, writerId); 
-            const baseIndex = index * 2; // Крок по 2, бо два значення на кожен жанр (book_id і genre_id)
+            const baseIndex = index * 2; // Крок по 2, бо у нас два значення на кожен жанр (book_id і genre_id)
             return `($${baseIndex + 1}, $${baseIndex + 2})`;
 
         }).join(", ");
 
-        // Використати динамічний SQL для вставки всіх авторів за один запит
+        // Використовуємо динамічний SQL для вставки всіх авторів за один запит
         const query = `INSERT INTO writer_list (book_id, writer_id) VALUES ${valueStrings}`;
-        
         await pool.query(query, values);
     }
 
@@ -86,7 +80,6 @@ export class Writer {
         try {
             await client.query('BEGIN');
             await client.query(`DELETE FROM writer_list WHERE book_id = $1`, [bookId]);
-            
             if (writers && writers.length > 0) {
                 const values = [];
                 const valueStrings = writers.map((writerId, index) => {
@@ -96,10 +89,8 @@ export class Writer {
                 }).join(", ");
 
                 const query = `INSERT INTO writer_list (book_id, writer_id) VALUES ${valueStrings}`;
-                
                 await client.query(query, values);
             }
-
             await client.query('COMMIT');
         } catch (error) {
             await client.query('ROLLBACK');
@@ -116,12 +107,12 @@ export class Writer {
             RETURNING id, full_name, birthday::TEXT`, 
             [full_name, birthday]
         );
-
-        return result.rows[0] ? new Writer(result.rows[0]) : null;
+        return new Writer(result.rows[0]);
     }
 
     static async update(id, { full_name, birthday }) {
         const values = [full_name, birthday, id];
+        console.log("Update Values:", values); // Додано для відлагодження
         // COALESCE бере перше значення, яке не є NULL і ставить його (тобто старе), якщо не надійшло нове
         const query = `
             UPDATE writer
@@ -133,7 +124,7 @@ export class Writer {
         `;
 
         const result = await pool.query(query, values);
-
+        console.log("Update Result:", result); // Додано для відлагодження
         return result.rows[0] ? new Writer(result.rows[0]) : null;
     }
 

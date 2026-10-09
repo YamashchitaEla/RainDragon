@@ -59,13 +59,9 @@ function Posts() {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const res = await requestWithRefresh(
-                    "http://localhost:5000/api/tags"
-                );
+                const res = await requestWithRefresh("http://localhost:5000/api/tags");
                 const data = await res.json();
-                if (res.ok) {
-                    setTagsList(data.tags || []);
-                }
+                if (res.ok) setTagsList(data.tags || []);
             } catch (err) { 
                 console.error(err); 
             }

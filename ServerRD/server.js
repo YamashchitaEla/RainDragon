@@ -18,7 +18,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Підключити маршрути
+// Підключаємо маршрути
 app.use("/api", Routes);
 
 // Помилки

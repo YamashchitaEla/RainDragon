@@ -1,6 +1,7 @@
 import { pool } from "../db/db.js";
 
 export class Post {
+    // DTO - Data Transfer Object. Безпечна деструктуризація для захисту від undefined та фільтрації мусору
     constructor(data) {
         const {
             id = null,
@@ -10,68 +11,60 @@ export class Post {
             content = null,
             created_at = null,
             updated_at = null,
-            author = null,
+            author = null, // Сюда будет приходить объект автора {id, nickname}
             published = null
         } = data || {};
-
         Object.assign(this, { id, title, short_description, preview, content, created_at, updated_at, author, published });
     }
 
-    // Отримання останніх 10 публікацій
+    // Отримання останніх 10 постів
     static async getLatestPosts() {
-        const result = await pool.query(
-            `SELECT 
+        const result = await pool.query(`
+            SELECT 
                 p.id, p.title, p.short_description, p.preview, p.published, p.updated_at,
                 JSON_BUILD_OBJECT('id', u.id, 'nickname', u.nickname) AS author -- Додано автора для відображення на фронтенді
             FROM post AS p 
             JOIN "user" AS u ON p.author_id = u.id
             WHERE p.published = true
             ORDER BY p.updated_at DESC, p.id DESC
-            LIMIT 10`
-        );
-
+            LIMIT 10
+        `);
         return result.rows.map(row => new Post(row));
     }
 
-    // Отримання всіх публікацій
+    // Отримання всіх постів
     static async getAllPosts() {
-        const result = await pool.query(
-            `SELECT 
+        const result = await pool.query(`
+            SELECT 
                 p.id, p.title, p.short_description, p.preview, p.published, p.updated_at,
                 JSON_BUILD_OBJECT('id', u.id, 'nickname', u.nickname) AS author -- Додано автора
             FROM post AS p 
             JOIN "user" AS u ON p.author_id = u.id
             WHERE p.published = true
-            ORDER BY p.updated_at DESC, p.id DESC`
-        );
-
+            ORDER BY p.updated_at DESC, p.id DESC
+        `);
         return result.rows.map(row => new Post(row));
     }
 
     // Отримання чернеток
     static async getAllDrafts(id) {
-        const result = await pool.query(
-            `SELECT 
+        const result = await pool.query(`
+            SELECT 
                 p.id, p.title, p.short_description, p.preview, p.published, p.updated_at,
                 JSON_BUILD_OBJECT('id', u.id, 'nickname', u.nickname) AS author
             FROM post AS p 
             JOIN "user" AS u ON p.author_id = u.id
             WHERE p.author_id = $1 AND p.published = false
-            ORDER BY p.updated_at DESC, p.id DESC`, 
-            [id]
-        );
-
+            ORDER BY p.updated_at DESC, p.id DESC
+        `, [id]);
         return result.rows.map(row => new Post(row));
     }
         
-    // Отримання публікацій за тегами
+    // Отримання постів за тегами
     static async getPostsByTags(tagIds) {
-        if (!tagIds || tagIds.length === 0) {
-            return [];
-        }
-
-        const result = await pool.query(
-            `SELECT
+        if (!tagIds || tagIds.length === 0) return [];
+        const result = await pool.query(`
+            SELECT
                 p.id, p.title, p.short_description, p.preview, p.published, p.created_at,
                 JSON_BUILD_OBJECT('id', u.id, 'nickname', u.nickname) AS author
             FROM post p
@@ -83,14 +76,13 @@ export class Post {
                 GROUP BY post_id
                 HAVING COUNT(DISTINCT tag_id) = $2
             ) AND p.published = true
-            ORDER BY p.updated_at DESC, p.id DESC`, 
-            [tagIds, tagIds.length]
-        );
+            ORDER BY p.updated_at DESC, p.id DESC
+        `, [tagIds, tagIds.length]);
 
         return result.rows.map(row => new Post(row));
     }
 
-    // Детальна інформація про публікацію
+    // Детальна інформація про пост
     static async getPostInfoById(id) {
         const result = await pool.query(
             `SELECT 
@@ -101,7 +93,6 @@ export class Post {
             WHERE p.id = $1`, 
             [id]
         );
-
         return result.rows[0] ? new Post(result.rows[0]) : null;
     }
 
@@ -112,7 +103,6 @@ export class Post {
             RETURNING *`,
             [title, short_description, preview, content, author_id, published]
         );
-
         return result.rows[0] ? new Post(result.rows[0]) : null;
     }
  
@@ -132,7 +122,6 @@ export class Post {
         `;
 
         const result = await pool.query(query, values);
-
         return result.rows[0] ? new Post(result.rows[0]) : null;
     }
 
