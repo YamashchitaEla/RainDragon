@@ -1,10 +1,18 @@
 import * as bookService from "../services/bookService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+
+// Универсальный хелпер для обработки ошибок в контроллере
+const handleControllerError = (res, err, contextMessage) => {
+    console.error(`${contextMessage}:`, err);
+    const statusCode = err.statusCode || 500; // Читаем кастомный статус из сервиса, иначе 500
+    return res.status(statusCode).json({ 
+        success: false, 
+        message: err.message || "Внутрішня помилка сервера" 
+    });
+};
 
 export const getLatestBooks = async (req, res) => {
     try {
         const latestBooks = await bookService.getLatestBooksService();
-        
         return res.status(200).json({ 
             success: true, 
             latestBooks 
@@ -17,7 +25,6 @@ export const getLatestBooks = async (req, res) => {
 export const getTopBooks = async (req, res) => {
     try {
         const topBooks = await bookService.getTopBooksService();
-        
         return res.status(200).json({ 
             success: true, 
             topBooks 
@@ -31,15 +38,12 @@ export const getAllBooks = async (req, res) => {
     try {
         const { genres } = req.query;
         let books;
-        
         if (genres) {
             const genreIds = genres.split(",").map(Number);
-            
             books = await bookService.getBooksByGenresService(genreIds);
         } else {
             books = await bookService.getAllBooksService();
         }
-
         return res.status(200).json({ 
             success: true, 
             books 
@@ -52,9 +56,7 @@ export const getAllBooks = async (req, res) => {
 export const getBook = async (req, res) => {
     try {
         const { id } = req.params;
-
         const bookInfo = await bookService.getBookById(id);
-
         return res.status(200).json({ 
             success: true, 
             bookInfo 
@@ -68,7 +70,7 @@ export const createBook = async (req, res) => {
     try {
         const { original_name, ukrainian_name, year, status, volumes, chapters, extras, description } = req.body;
 
-        const preview = req.files?.preview ? req.files.preview[0] : null;
+        const previewFile = req.files?.preview ? req.files.preview[0] : null;
 
         const authors = Array.isArray(req.body.authors)
             ? req.body.authors
@@ -81,15 +83,13 @@ export const createBook = async (req, res) => {
         const newBook = await bookService.createBook(
             original_name, 
             ukrainian_name, 
-            year, 
-            status, 
+            year, status, 
             volumes, 
             chapters, 
             extras, 
             description, 
-            preview, 
-            authors, 
-            genres
+            previewFile, 
+            authors, genres
         );
 
         return res.status(201).json({ 
@@ -106,7 +106,7 @@ export const updateBook = async (req, res) => {
         const { id } = req.params;
         const { original_name, ukrainian_name, year, status, volumes, chapters, extras, description } = req.body;
         
-        const preview = req.files?.preview ? req.files.preview[0] : null;
+        const previewFile = req.files?.preview ? req.files.preview[0] : null;
 
         const authors = Array.isArray(req.body.authors)
             ? req.body.authors
@@ -120,17 +120,15 @@ export const updateBook = async (req, res) => {
             id, 
             original_name, 
             ukrainian_name, 
-            year, 
-            status, 
+            year, status, 
             volumes, 
             chapters, 
             extras, 
             description, 
-            preview, 
+            previewFile, 
             authors, 
             genres
         );
-
         return res.status(200).json({ 
             success: true, 
             bookId: updatedBook.id 
@@ -143,9 +141,7 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
     try {
         const { id } = req.params;
-
         await bookService.deleteBook(id);
-
         return res.status(200).json({ 
             success: true 
         });
@@ -157,9 +153,7 @@ export const deleteBook = async (req, res) => {
 export const getWatchlist = async (req, res) => {
     try {
         const { user_id, book_id } = req.params;
-        
         const watchlist = await bookService.getWatchlist(user_id, book_id);
-        
         return res.status(200).json({ 
             success: true, 
             watchlist 
@@ -172,9 +166,7 @@ export const getWatchlist = async (req, res) => {
 export const updateWatchlist = async (req, res) => {
     try {
         const { user_id, book_id, status } = req.body;
-        
         await bookService.updateWatchlist(user_id, book_id, status); 
-        
         return res.status(200).json({ 
             success: true 
         });
@@ -186,9 +178,7 @@ export const updateWatchlist = async (req, res) => {
 export const getWatchlistByUserId = async (req, res) => {
     try {
         const { id } = req.params;
-        
         const watchlist = await bookService.getWatchlistByUserId(id);
-        
         return res.status(200).json({ 
             success: true, 
             watchlist 
@@ -201,9 +191,7 @@ export const getWatchlistByUserId = async (req, res) => {
 export const getRating = async (req, res) => {
     try {
         const { user_id, book_id } = req.params;
-        
         const rating = await bookService.getRating(user_id, book_id);
-        
         return res.status(200).json({ 
             success: true, 
             rating 
@@ -216,9 +204,7 @@ export const getRating = async (req, res) => {
 export const updateRating = async (req, res) => {
     try {
         const { user_id, book_id, rate } = req.body;
-        
         const averageRating = await bookService.updateRating(user_id, book_id, rate);
-        
         return res.status(200).json({ 
             success: true, 
             rating: averageRating 

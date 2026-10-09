@@ -10,10 +10,9 @@ function MainPage() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await requestWithRefresh(
-                    "http://localhost:5000/api/books_latest"
-                );
-
+                const res = await requestWithRefresh("http://localhost:5000/api/books_latest", {
+                    method: "GET"
+                });
                 const data = await res.json();
                 if (res.ok) {
                     setBooks(data.latestBooks || []);
@@ -32,10 +31,12 @@ function MainPage() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await requestWithRefresh(
-                    "http://localhost:5000/api/books_top"
-                );
-
+                const res = await requestWithRefresh("http://localhost:5000/api/books_top", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
                 const data = await res.json();
                 if (res.ok) {
                     setTopBooks(data.topBooks || []);
@@ -47,8 +48,8 @@ function MainPage() {
             }
         };
 
-        fetchBooks(); 
-    }, []); 
+        fetchBooks(); // не забудь викликати функцію
+    }, []); // порожній масив => виконається один раз при монтуванні 
 
     const navigate = useNavigate();
 

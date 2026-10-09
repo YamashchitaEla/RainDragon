@@ -37,17 +37,13 @@ function WriterPage() {
     useEffect(() => {
         const fetchWriterData = async () => {
             try {
-                const writerRes = await requestWithRefresh(
-                    `http://localhost:5000/api/writer/${id}`
-                );
+                const writerRes = await requestWithRefresh(`http://localhost:5000/api/writer/${id}`);
                 const writerData = await writerRes.json();
                 if (writerRes.ok) {
                     setWriter(writerData.writerInfo);
                 }
 
-                const booksRes = await requestWithRefresh(
-                    `http://localhost:5000/api/books/writer/${id}`
-                );
+                const booksRes = await requestWithRefresh(`http://localhost:5000/api/books/writer/${id}`);
                 const booksData = await booksRes.json();
                 if (booksRes.ok) {
                     setWriterBooks(booksData.books || []);
@@ -64,12 +60,9 @@ function WriterPage() {
     const handleDeleteWriter = async (writerId) => {
         if (!window.confirm("Ви впевнені, що хочете видалити цього автора?")) return;
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/writer/delete/${writerId}`, 
-                {
-                    method: "DELETE",
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/writer/delete/${writerId}`, {
+                method: "DELETE",
+            });
             if (res.ok) {
                 alert("Автор успішно видален.");
                 navigate("/writers");

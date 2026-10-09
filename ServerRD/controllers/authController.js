@@ -1,104 +1,77 @@
-import { loginService, registerService } from "../services/authService.js";
-import { handleControllerError } from "../utils/errorHandler.js";
+import { loginService } from "../services/authService.js";
+import { registerService } from "../services/authService.js";
 import jwt from "jsonwebtoken";
 
 export const login = async (req, res) => {
     try {
         const { login, password, admin } = req.body;
-        const { accessToken, refreshToken } = await loginService(
-            login, 
-            password, 
-            admin
-        );
+        const { success, accessToken, refreshToken, message } = await loginService(login, password, admin);
 
+        // Відправляємо refreshToken в httpOnly cookie
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        return res.status(200).json({
-            success: true,
-            accessToken,
-            message: admin === true || admin === "true"
-                ? "Logged in as Admin"
-                : "Logged in as User"
-        });
+        // AccessToken відправляємо у JSON
+        res.json({ success, accessToken, message });
     } catch (err) {
-        return handleControllerError(res, err, "Login Error");
+        res.status(401).json({ message: err.message });
     }
 };
 
 export const register = async (req, res) => {
     try {
         const { nickname, login, password } = req.body;
-        const { accessToken, refreshToken } = await registerService(
-            nickname,
-            login,
-            password
-        );
+        // Отримуємо refreshToken з сервісу (переконайтесь, що сервіс його повертає)
+        const { success, accessToken, refreshToken, message } = await registerService(nickname, login, password);
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        return res.status(201).json({
-            success: true,
-            accessToken,
-            message: "User registered successfully"
-        });
+        res.json({ success, accessToken, message });
     } catch (err) {
-        return handleControllerError(res, err, "Register Error");
+        res.status(401).json({ message: err.message });
     }
 };
 
 export const refresh = async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshToken;
+        if (!refreshToken) return res.status(401).json({ message: "No refresh token" });
 
-        if (!refreshToken) {
-            return res.status(401).json({
-                success: false,
-                message: "No refresh token"
-            });
-        }
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
 
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.REFRESH_SECRET
-        );
-
+        // Об'єднуємо userId та admin в один об'єкт payload
         const newAccessToken = jwt.sign(
             { userId: decoded.userId, admin: decoded.admin },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 
-        return res.status(200).json({
-            success: true,
-            accessToken: newAccessToken
-        });
+        res.json({ accessToken: newAccessToken });
     } catch (err) {
-        return handleControllerError(res, err, "Refresh Token Invalid");
+        res.status(403).json({ message: "Refresh token invalid" });
     }
 };
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie("refreshToken", {
+        // видаляє cookie з ім'ям refreshToken у браузері користувача
+        res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             sameSite: "lax"
         });
-
-        return res.status(200).json({
-            success: true
-        });
+        
+        return res.status(200).json({ success: true, message: "Вихід виконано" });
     } catch (err) {
-        return handleControllerError(res, err, "Logout Error");
+        res.status(500).json({ message: err.message });
     }
 };

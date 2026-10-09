@@ -9,8 +9,9 @@
 db/                  
 diagram/             
 screenshots/         
-source/              
+source/     
+пояснення/
 
-# Конфігурація
-.env
-*.env
+# Ігноруємо залежності
+RainDragon/node_modules/
+ServerRD/node_modules/
