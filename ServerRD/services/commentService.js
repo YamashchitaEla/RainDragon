@@ -28,6 +28,7 @@ export const getBookCommentsById = async (id) => {
     }
 
     const comments = await Comment.getBookComments(id);
+    
     return buildTree(comments);
 };
 
@@ -37,6 +38,7 @@ export const getPostCommentsById = async (id) => {
     }
 
     const comments = await Comment.getPostComments(id);
+
     return buildTree(comments);
 };
 
