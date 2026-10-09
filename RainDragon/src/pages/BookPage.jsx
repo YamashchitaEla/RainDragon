@@ -41,9 +41,7 @@ function BookPage() {
 
     const getInfoOfBook = async (bookId) => {
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/book/${bookId}`
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/book/${bookId}`);
             const data = await res.json();
             if (!res.ok) {
                 throw new Error(data.message);
@@ -58,9 +56,7 @@ function BookPage() {
     // Отримуємо жанри книги
     const getGenresOfBook = async (bookId) => {
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/genres/${bookId}`
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/genres/${bookId}`);
             const data = await res.json();
             if (!res.ok) {
                 throw new Error(data.message);
@@ -97,13 +93,9 @@ function BookPage() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await requestWithRefresh(
-                    "http://localhost:5000/api/books"
-                );
+                const res = await requestWithRefresh("http://localhost:5000/api/books");
                 const data = await res.json();
-                if (res.ok) {
-                    setBooks(data.books || []);
-                }
+                if (res.ok) setBooks(data.books || []);
             } catch (err) {
                 console.error("Помилка при отриманні книг:", err);
             }
@@ -119,17 +111,17 @@ function BookPage() {
         const currentAuthors = current.author || [];
         const novelAuthors = novel.author || [];
 
-        // Жанри
+        // жанри
         for (const genre of currentGenres) {
             if (novelGenres.some((g) => g.id === genre.id)) {
                 score += 5;
             }
         }
-        // Автор
+        // автор
         if (currentAuthors.some((a) => novelAuthors.some((b) => b.id === a.id))) {
             score += 10;
         }
-        // Схожа кількість глав
+        // схожа кількість глав
         if (current.chapters && novel.chapters && Math.abs(current.chapters - novel.chapters) < 300) {
             score += 1;
         }
@@ -139,9 +131,7 @@ function BookPage() {
 
     useEffect(() => {
         const loadRecommendations = async () => {
-            if (!book || books.length === 0) {
-                return;
-            }
+            if (!book || books.length === 0) return;
 
             // Отримуємо повну інформацію про всі книги
             const fullBooks = await Promise.all(
@@ -150,9 +140,7 @@ function BookPage() {
 
             const validBooks = fullBooks.filter((b) => b && b.id);
             const currentBook = validBooks.find((b) => b.id === book.id);
-            if (!currentBook) {
-                return;
-            }
+            if (!currentBook) return;
 
             const recs = validBooks
                 .filter((novel) => novel.id !== currentBook.id)
@@ -171,16 +159,11 @@ function BookPage() {
 
     // Функція для видалення книги
     const handleDeleteBook = async (bookId) => {
-        if (!window.confirm("Ви впевнені, що хочете видалити цю книгу?")) {
-            return;
-        }
+        if (!window.confirm("Ви впевнені, що хочете видалити цю книгу?")) return;
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/book/delete/${bookId}`, 
-                {
-                    method: "DELETE",
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/book/delete/${bookId}`, {
+                method: "DELETE",
+            });
             if (res.ok) {
                 alert("Книга успішно видалена.");
                 navigate("/books");
@@ -193,19 +176,14 @@ function BookPage() {
         }
     };
 
-    // Завантаження статусу
     useEffect(() => {
         const fetchUserStatus = async () => {
             const currentToken = localStorage.getItem("token");
-            if (!currentToken || !id) {
-                return; // Не робимо запит, якщо немає токена або ID книги
-            }
+            if (!currentToken || !id) return; // Не робимо запит, якщо немає токена або ID книги
 
             try {
                 const decoded = jwtDecode(currentToken);
-                const res = await requestWithRefresh(
-                    `http://localhost:5000/api/watchlist/${decoded.userId}/${id}`
-                );
+                const res = await requestWithRefresh(`http://localhost:5000/api/watchlist/${decoded.userId}/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setUserStatus(data.watchlist?.status || "");
@@ -220,24 +198,20 @@ function BookPage() {
 
     const handleStatusChange = async (newStatus) => {
         const currentToken = localStorage.getItem("token");
-        if (!currentToken) {
-            return;
-        }
+        if (!currentToken) return;
 
         try {
             const decoded = jwtDecode(currentToken);
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/watchlist/update`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_id: decoded.userId,
-                        book_id: id,
-                        status: newStatus,
-                    }),
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/watchlist/update`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: decoded.userId,
+                    book_id: id,
+                    status: newStatus,
+                }),
+            });
+
             if (res.ok) {
                 setUserStatus(newStatus);
             }
@@ -250,9 +224,7 @@ function BookPage() {
     useEffect(() => {
         const fetchUserRating = async () => {
             const currentToken = localStorage.getItem("token");
-            if (!currentToken || !id) {
-                return;
-            }
+            if (!currentToken || !id) return;
 
             try {
                 const decoded = jwtDecode(currentToken);
@@ -262,9 +234,6 @@ function BookPage() {
 
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("Відповідь рейтингу:", data);
-                    console.log("Рейтинг користувача:", data.rating?.user_rating);
-                    console.log("Середній рейтинг:", data.rating?.average_rating);
                     setUserRating(data.rating?.user_rating || 0);
                     setBookRating(Number(data.rating?.average_rating) || 0);
                 }
@@ -276,26 +245,22 @@ function BookPage() {
         fetchUserRating();
     }, [id]);
 
+
     const handleRating = async (rating) => {
         const currentToken = localStorage.getItem("token");
-
-        if (!currentToken) {
-            return;
-        }
+        if (!currentToken) return;
 
         try {
             const decoded = jwtDecode(currentToken);
 
-            // Если нажали на уже выбранную звезду — удаляем оценку
+            // Якщо натиснули на ту саму оцінку — прибираємо її
             const newRating = userRating === rating ? 0 : rating;
 
             const res = await requestWithRefresh(
                 "http://localhost:5000/api/rating/update",
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         user_id: decoded.userId,
                         book_id: id,
@@ -305,12 +270,9 @@ function BookPage() {
             );
 
             const data = await res.json();
-
-            console.log("Ответ после оценки:", data);
-
             if (res.ok) {
-                setUserRating(Number(data.rating?.user_rating) || 0);
-                setBookRating(Number(data.rating?.average_rating) || 0);
+                setUserRating(newRating);
+                setBookRating(data.rating || 0);
             } else {
                 alert(data.message);
             }
@@ -321,34 +283,27 @@ function BookPage() {
 
     // Коментарі
     const handleAddComment = async () => {
-        if (!newComment.trim()) {
-            return;
-        }
+        if (!newComment.trim()) return;
 
         try {
             // Отримуємо актуальний токен з localStorage
             const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
-
+            if (!currentToken) return;
             // Декодуємо ID користувача (можна зробити це безпосередньо перед запитом)
             const decoded = jwtDecode(currentToken);
 
             // Використовуємо функцію-обгортку замість звичайного fetch
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/comments`, 
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        parent_id: null,
-                        author_id: decoded.userId,
-                        book_id: id,
-                        text: newComment,
-                    }),
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/comments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    parent_id: null,
+                    author_id: decoded.userId,
+                    book_id: id,
+                    text: newComment,
+                }),
+            });
+
             // Обробка відповіді
             if (res.ok) {
                 const data = await res.json();
@@ -375,9 +330,7 @@ function BookPage() {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await requestWithRefresh(
-                    `http://localhost:5000/api/comments/book/${id}`
-                );
+                const res = await requestWithRefresh(`http://localhost:5000/api/comments/book/${id}`);
                 const data = await res.json();
 
                 if (res.ok) {
@@ -395,12 +348,9 @@ function BookPage() {
 
     const handleDeleteComment = async (commentId) => {
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/comments/${commentId}`, 
-                {
-                    method: "DELETE",
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/comments/${commentId}`, {
+                method: "DELETE",
+            });
 
             if (res.ok) {
                 // Рекурсивна функція для видалення коментаря з будь-якого рівня вкладеності
@@ -426,36 +376,32 @@ function BookPage() {
 
     const handleUpdateComment = async (commentId, newText) => {
         try {
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/comments/${commentId}`, 
-                {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        text: newText 
-                    }), // Відправляємо новий текст
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/comments/${commentId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: newText }), // Відправляємо новий текст
+            });
 
             if (res.ok) {
-                const data = await res.json(); 
-                const updatedCommentFromServer = data.comment;
+            const data = await res.json(); 
+            const updatedCommentFromServer = data.comment;
 
-                const updateById = (list) => {
-                    return list.map((c) => {
-                        if (c.id === commentId) {
-                            return { 
-                                ...updatedCommentFromServer, 
-                                replies: c.replies
-                            };
-                        }
+            const updateById = (list) => {
+                return list.map((c) => {
+                    if (c.id === commentId) {
+                        return { 
+                            ...updatedCommentFromServer, 
+                            replies: c.replies
+                        };
+                    }
 
-                        if (c.replies && c.replies.length > 0) {
-                            return { ...c, replies: updateById(c.replies) };
-                        }
-                        return c;
-                    });
-                };
+                    if (c.replies && c.replies.length > 0) {
+                        return { ...c, replies: updateById(c.replies) };
+                    }
+                    return c;
+                });
+            };
+
             setComments((prev) => updateById([...prev]));
         }
         else {
@@ -469,29 +415,22 @@ function BookPage() {
 
     const handleReplySubmit = async (parentId, replyText) => {
         // Логіка додавання відповіді дуже схожа на додавання нового коментаря, але з parent_id
-        if (!replyText.trim()) {
-            return;
-        }
+        if (!replyText.trim()) return;
         try {
             const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
+            if (!currentToken) return;
             const decoded = jwtDecode(currentToken);
 
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/comments`, 
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        parent_id: parentId,
-                        author_id: decoded.userId,
-                        book_id: id,
-                        text: replyText,
-                    }),
-                }
-            );
+            const res = await requestWithRefresh(`http://localhost:5000/api/comments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    parent_id: parentId,
+                    author_id: decoded.userId,
+                    book_id: id,
+                    text: replyText,
+                }),
+            });
 
             // Обробка відповіді
             if (res.ok) {
@@ -521,9 +460,7 @@ function BookPage() {
 
                 setComments((prev) => {
                     // Якщо parent_id немає — це основний коментар, додаємо в корінь
-                    if (!parentId) {
-                        return [newReply, ...prev];
-                    }
+                    if (!parentId) return [newReply, ...prev];
                     // Якщо є parent_id — шукаємо куди вставити
                     return insertReply(prev, parentId, newReply);
                 });

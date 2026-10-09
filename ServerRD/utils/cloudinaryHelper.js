@@ -18,31 +18,31 @@ export const deleteFileFromCloudinary = async (url, resourceType = "image") => {
     }
 
     try {
-        // Розбиття посилання по слешах на масив
+        // Розбиваємо посилання по слешах на масив
         const urlParts = url.split('/');
 
-        // Дістати останній елемент (ім'я файлу з розширенням): "14_h1h9bv.jpg"
+        // Дістаємо останній елемент (ім'я файлу з розширенням): "14_h1h9bv.jpg"
         const fileNameWithExtension = urlParts.pop(); 
 
-        // Взіти чисте ім'я файлу до крапки: "14_h1h9bv"
+        // Беремо чисте ім'я файлу до крапки: "14_h1h9bv"
         const fileName = fileNameWithExtension.split('.')[0]; 
 
-        // Дістати передостанній елемент (назву папки або службове слово 'upload')
+        // Дістаємо передостанній елемент (назву папки або службове слово 'upload')
         const folderOrUpload = urlParts.pop(); 
 
         // Фінальна склейка Public ID: 
-        // Якщо перед файлом йшло 'upload' — папки в URL немає, взяти просто ім'я файлу
-        // Якщо там назва папки (наприклад, users_avatars) — склеїти їх разом
+        // Якщо перед файлом йшло 'upload' — папки в URL немає, беремо просто ім'я файлу
+        // Якщо там назва папки (наприклад, users_avatars) — склеюємо їх разом
         const filePublicId = folderOrUpload === 'upload' 
             ? fileName 
             : `${folderOrUpload}/${fileName}`;
 
-        // Надіслати запит на видалення в Cloudinary з урахуванням типу ресурсу
+        // Надсилаємо запит на видалення в Cloudinary з урахуванням типу ресурсу
         const result = await cloudinary.uploader.destroy(filePublicId, { resource_type: resourceType });
         
         console.log(`[Cloudinary Clean] Файл ${filePublicId} успішно видалено. Статус:`, result);
     } catch (err) {
-        // Не викидати помилку далі (throw), щоб збій у хмарі не ламав основну роботу бази даних
         console.error(`[Cloudinary Error] Не вдалося видалити файл з URL: ${url}. Помилка:`, err);
+        // Не викидаємо помилку далі (throw), щоб збій у хмарі не ламав основну роботу бази даних
     }
 };

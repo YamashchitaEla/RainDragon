@@ -28,7 +28,6 @@ export class Comment {
             ORDER BY c.date ASC`, 
             [bookId]
         );
-
         return result.rows.map(row => new Comment(row));
     }
 
@@ -41,7 +40,6 @@ export class Comment {
             ORDER BY c.date ASC`,
             [postId]
         );
-        
         return result.rows.map(row => new Comment(row));
     }
 
@@ -59,7 +57,7 @@ export class Comment {
         const values = [parent_id, author_id, book_id, post_id, text];
         const result = await pool.query(query, values);
         
-        return result.rows[0] ? new Comment(result.rows[0]) : null;
+        return new Comment(result.rows[0]);
     }
 
     static async deleteComment(id) {

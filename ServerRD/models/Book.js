@@ -18,7 +18,6 @@ export class Book {
             watchlist_status = null,
             author = []
         } = data || {};
-
         Object.assign(this, { id, original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview, updated_at, author, rating, watchlist_status });
     }
 
@@ -38,7 +37,6 @@ export class Book {
             ORDER BY b.updated_at DESC, b.id DESC
             LIMIT 5;`
         );
-
         return result.rows.map(row => new Book(row));
     }
 
@@ -59,7 +57,6 @@ export class Book {
             ORDER BY rating DESC
             LIMIT 5;`
         );
-        
         return result.rows.map(row => new Book(row));
     }
 
@@ -76,14 +73,13 @@ export class Book {
             JOIN writer AS w ON wl.writer_id = w.id 
             GROUP BY b.id, b.ukrainian_name, b.preview;`
         );
-
         return result.rows.map(row => new Book(row));
     }
 
     // Отримання книг за жанрами
     static async getBooksByGenres(genreIds) {
-        const result = await pool.query(
-            `SELECT
+        const result = await pool.query(`
+            SELECT
                 b.id,
                 b.ukrainian_name,
                 b.preview,
@@ -101,14 +97,13 @@ export class Book {
             GROUP BY b.id, b.ukrainian_name, b.preview;`, 
             [genreIds, genreIds.length]
         );
-
         return result.rows.map(row => new Book(row));
     }
 
     // Детальна інформація про книгу
     static async getBookInfoById(id) {
-        const result = await pool.query(
-            `SELECT 
+        const result = await pool.query(`
+            SELECT 
                 b.*, 
                 JSON_AGG(JSON_BUILD_OBJECT('id', w.id, 'full_name', w.full_name)) AS author 
             FROM book AS b 
@@ -118,14 +113,13 @@ export class Book {
             GROUP BY b.id`, 
             [id]
         );
-
         return result.rows[0] ? new Book(result.rows[0]) : null;
     }
 
     // Отримання списку "Планую прочитати" для користувача
     static async getWatchlistByUserId(userId) {
-        const result = await pool.query(
-            `SELECT 
+        const result = await pool.query(`
+            SELECT 
                 b.id, 
                 b.ukrainian_name, 
                 b.preview, 
@@ -139,7 +133,8 @@ export class Book {
             GROUP BY b.id, b.ukrainian_name, b.preview, wl.status`, 
             [userId]
         );
-        
+
+        // Тут ми повертаємо об'єкти, які включають масив авторів
         return result.rows.map(row => new Book(row));
     }
 
@@ -148,10 +143,8 @@ export class Book {
             `INSERT INTO book (original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
             RETURNING id`, 
-            [original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview]
-        );
-
-        return result.rows[0] ? new Book(result.rows[0]) : null;
+            [original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview]);
+        return new Book(result.rows[0]);
     }
 
     static async updateBook(id, { original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview }) {
@@ -173,7 +166,6 @@ export class Book {
             WHERE id = $10
             RETURNING id, original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview, updated_at`;
         const result = await pool.query(query, values);
-        
         return result.rows[0] ? new Book(result.rows[0]) : null;
     }
 
@@ -191,17 +183,16 @@ export class Book {
             WHERE user_id = $1 AND book_id = $2`, 
             [user_id, book_id]
         );
-
         return result.rows[0];
     }
 
     static async updateWatchlistStatus(user_id, book_id, status) {
-        const query = 
-            `INSERT INTO watch_list (user_id, book_id, status) 
+        const query = `
+            INSERT INTO watch_list (user_id, book_id, status) 
             VALUES ($1, $2, $3) 
             ON CONFLICT (user_id, book_id) 
-            DO UPDATE SET status = EXCLUDED.status;`;
-
+            DO UPDATE SET status = EXCLUDED.status;
+        `;
         await pool.query(query, [user_id, book_id, status]);
     }
 
@@ -217,47 +208,29 @@ export class Book {
                     SELECT AVG(rate)
                     FROM rating
                     WHERE book_id = $2
-                ) AS average_rating`,
+                ) AS average_rating
+            `,
             [user_id, book_id]
         );
-
         return result.rows[0];
     }
 
     static async updateRating(user_id, book_id, rate) {
         if (rate === 0) {
             await pool.query(
-                `DELETE FROM rating
-                WHERE user_id = $1 AND book_id = $2`,
+                `DELETE FROM rating 
+                WHERE user_id = $1 AND book_id = $2`, 
                 [user_id, book_id]
             );
-        } else {
-            const query = 
-                `INSERT INTO rating (user_id, book_id, rate)
-                VALUES ($1, $2, $3)
-                ON CONFLICT (user_id, book_id)
-                DO UPDATE SET rate = EXCLUDED.rate;`;
-            await pool.query(query, [user_id, book_id, rate]);
+            return; 
         }
 
-        const result = await pool.query(
-            `SELECT
-                COALESCE(
-                    (SELECT rate
-                    FROM rating
-                    WHERE user_id = $1 AND book_id = $2),
-                    0
-                ) AS user_rating,
-
-                COALESCE(
-                    (SELECT AVG(rate)
-                    FROM rating
-                    WHERE book_id = $2),
-                    0
-                ) AS average_rating`,
-            [user_id, book_id]
-        );
-        
-        return result.rows[0];
+        const query = `
+            INSERT INTO rating (user_id, book_id, rate) 
+            VALUES ($1, $2, $3) 
+            ON CONFLICT (user_id, book_id) 
+            DO UPDATE SET rate = EXCLUDED.rate;
+        `;
+        await pool.query(query, [user_id, book_id, rate]);
     }
 }
