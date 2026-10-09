@@ -9,7 +9,8 @@
 db/                  
 diagram/             
 screenshots/         
-source/              
+source/     
+пояснення/         
 
 # Конфігурація
 .env
