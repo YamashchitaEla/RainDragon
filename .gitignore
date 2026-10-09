@@ -1,2 +1,16 @@
-.docx
-.pptx
+# Файли
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.pdf
+
+# Директорії
+db/                  
+diagram/             
+screenshots/         
+source/              
+
+# Конфігурація
+.env
+*.env
