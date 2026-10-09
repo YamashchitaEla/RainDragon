@@ -39,7 +39,9 @@ function CreatePostPage() {
         if (mode === "edit" && id) {
             const fetchPostData = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/post/${id}`);
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/post/${id}`
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         const postData = data.postInfo || null;
@@ -66,9 +68,12 @@ function CreatePostPage() {
         if (mode === "edit" && post) {
             const fetchPostTags = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/tags/${post.id}`, {
-                        method: "GET"
-                    });
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/tags/${post.id}`, 
+                        {
+                            method: "GET"
+                        }
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         setSelectedTags(data.tags.map(t => t.id));
@@ -112,9 +117,7 @@ function CreatePostPage() {
 
     const handleSubmit = async (e, shouldPublish) => {
         e.preventDefault();
-
         const formData = new FormData();
-
         formData.append("title", post?.title || "");
         formData.append("short_description", post?.short_description || "");
         formData.append("content", JSON.stringify(post?.content || {}));

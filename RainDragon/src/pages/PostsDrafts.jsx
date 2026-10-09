@@ -31,7 +31,9 @@ function PostsDrafts() {
     useEffect(() => {
         const fetchDrafts = async (id) => {
             try {
-                const res = await requestWithRefresh(`http://localhost:5000/api/posts/drafts/${id}`);
+                const res = await requestWithRefresh(
+                    `http://localhost:5000/api/posts/drafts/${id}`
+                );
                 const data = await res.json();
                 if (res.ok) {
                     setAllDrafts(data.drafts || []);

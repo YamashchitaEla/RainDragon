@@ -1,20 +1,30 @@
 import * as tagService from "../services/tagService.js";
+import { handleControllerError } from '../utils/errorHandler.js';
 
 export const getTags = async (req, res) => {
     try {
         const { id } = req.params;
+
         const tags = await tagService.getPostTagsById(id);
-        res.json({ success: true, tags});
+        
+        return res.status(200).json({ 
+            success: true, 
+            tags 
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        return handleControllerError(res, err, "Get Post Tags Error");
     }       
 }
 
 export const getAllTags = async (req, res) => {
     try {
         const tags = await tagService.getAllTags();
-        res.json({ success: true, tags });
+        
+        return res.status(200).json({ 
+            success: true, 
+            tags 
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message }); 
+        return handleControllerError(res, err, "Get All Tags Error");
     }
 }

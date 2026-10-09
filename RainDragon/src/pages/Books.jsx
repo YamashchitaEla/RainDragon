@@ -58,7 +58,9 @@ function Books() {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const res = await requestWithRefresh("http://localhost:5000/api/genres");
+                const res = await requestWithRefresh(
+                    "http://localhost:5000/api/genres"
+                );
                 const data = await res.json();
                 if (res.ok) setGenresList(data.genres || []);
             } catch (err) { 

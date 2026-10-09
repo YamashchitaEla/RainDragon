@@ -24,7 +24,9 @@ function ContactsPage() {
         e.preventDefault();
         setSending(true);
         try {
-            const res = await requestWithRefresh("http://localhost:5000/api/contacts", {
+            const res = await requestWithRefresh(
+                "http://localhost:5000/api/contacts", 
+                {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

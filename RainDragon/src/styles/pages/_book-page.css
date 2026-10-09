@@ -139,7 +139,6 @@ body {
 .page-book__info__genres {
     display: flex;
     flex-direction: row;
-    /* Вирівнювання по верхньому краю */
     align-items: center;
     margin: 0 100px 0 100px;
     gap: 20px;
@@ -161,6 +160,22 @@ body {
     line-height: 1.5;
     margin: 5px 0 5px 0;
     word-break: break-word;
+}
+
+.page-book__info__genres_text:hover {
+    background-color: var(--bg);
+    color: var(--accent);
+    animation: glow 1.5s infinite;
+    transform: scale(1.05);
+    transition: background-color 0.30s ease, filter 0.30s ease;
+}
+
+.page-book__info__genres_text:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+    color: var(--code-bg);
+    animation-play-state: paused;
+    transition-duration: 0s;
 }
 
 .page-book__info__description {
@@ -335,11 +350,7 @@ body {
 
 /* Наведення */
 .page-book__stars i:hover {
-    color: var(--accent);
     transform: scale(1.15);
-    text-shadow:
-        0 0 5px var(--accent),
-        0 0 12px var(--accent);
 }
 
 /* Вибрані зірочки */
@@ -528,14 +539,6 @@ body {
     transform: translateY(0);
 }
 
-.page-book__rating-text{
-    font-family: "Memory", serif;
-    color: var(--accent);
-    text-shadow: 0 0 5px var(--border);
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-left: 10px;
-}
 
 /* Адаптивність для малих екранів */
 @media (max-width: 768px) {

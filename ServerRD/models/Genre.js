@@ -7,6 +7,7 @@ export class Genre {
             id = null,
             genre = null
         } = data || {};
+
         Object.assign(this, { id, genre });
     }
 
@@ -19,7 +20,7 @@ export class Genre {
             WHERE b.id = $1`, 
             [id]
         );
-        console.log("getBookGenres result:", result.rows); // Додатковий лог для перевірки результату
+
         return result.rows.map(row => new Genre(row));
     }
 
@@ -28,6 +29,7 @@ export class Genre {
             `SELECT id, genre 
             FROM genre`
         );
+
         return result.rows.map(row => new Genre(row));
     }
     
@@ -35,6 +37,7 @@ export class Genre {
         if (!genres || genres.length === 0) {
             return;
         }
+
         const values = [];
         const valueStrings = genres.map((genreId, index) => {
             values.push(bookId, genreId); 
@@ -57,10 +60,10 @@ export class Genre {
         try {
             await client.query('BEGIN');
 
-            // Спочатку видаляємо всі поточні зв'язки
+            // Спочатку видалити всі поточні зв'язки
             await client.query(`DELETE FROM genre_list WHERE book_id = $1`, [bookId]);
             
-            // Потім додаємо нові зв'язки через динамічний SQL
+            // Додати нові зв'язки через динамічний SQL
             const values = [];
             const valueStrings = genres.map((genreId, index) => {
                 values.push(bookId, genreId);
@@ -69,6 +72,7 @@ export class Genre {
             }).join(", ");
 
             const query = `INSERT INTO genre_list (book_id, genre_id) VALUES ${valueStrings}`;
+            
             await client.query(query, values);
 
             await client.query('COMMIT');

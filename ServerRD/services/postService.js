@@ -1,8 +1,8 @@
 import { Post } from "../models/Post.js"
 import { Tag } from "../models/Tag.js";
-import "dotenv/config";
+import { NotFoundError, BadRequestError, AppError } from "../utils/customErrors.js";
+import { deleteFileFromCloudinary } from "../utils/cloudinaryHelper.js";
 
-// Просто передаємо далі
 export const getLatestPostsService = () => Post.getLatestPosts(); // повертаємо масив останніх постів
 
 export const getAllPostsService = () => Post.getAllPosts(); 
@@ -11,12 +11,12 @@ export const getPostsByTagsService = (tagIds) => Post.getPostsByTags(tagIds);
 
 export const getAllDraftsService = async (id) => {
     if (!id) {
-        throw new Error("ID не визначено");
+        throw new BadRequestError("ID не визначено");
     }
-    const drafts = await Post.getAllDrafts(id);
 
+    const drafts = await Post.getAllDrafts(id);
     if (!drafts) {
-        throw new Error("Пост не знайдено");
+        throw new NotFoundError("Публікації не знайдено");
     }
 
     return drafts;
@@ -24,55 +24,102 @@ export const getAllDraftsService = async (id) => {
 
 export const getPostById = async (id) => {
     if (!id) {
-        throw new Error("ID не визначено");
+        throw new BadRequestError("ID не визначено");
     }
-    const post = await Post.getPostInfoById(id);
 
+    const post = await Post.getPostInfoById(id);
     if (!post) {
-        throw new Error("Пост не знайдено");
+         throw new NotFoundError("Публікацію не знайдено");
     }
 
     return post;
 };
 
 export const createPost = async (title, short_description, preview, content, author_id, published, tags) => {
-    // Перевірка текстових та числових полів
+    // Перевірка обов'язкових полів
     const isBasicFieldsEmpty = !title || !short_description || !preview || !content || !author_id || published === undefined;
-
-    // Перевірка масивів: чи вони існують ТА чи вони не порожні
     const isTagsEmpty = !tags || tags.length === 0;
-
+    
     if (isBasicFieldsEmpty || isTagsEmpty) {
-        throw new Error("Відсутні обов'язкові поля або не обрано жодного тега");
+        throw new BadRequestError("Відсутні обов'язкові поля або не обрано жодного тега");
     }
 
-    // Якщо все добре, створюємо пост
-    const newPostId = await Post.createPost(title, short_description, preview, content, author_id, published);
-    const result = await Tag.addTagsToPost(newPostId, tags);
+    // Шлях до прев'ю (обкладинки), оскільки модель очікує рядок
+    const previewUrl = preview.path;
+
+    const newPost = await Post.createPost(
+        title, 
+        short_description, 
+        previewUrl, 
+        content, 
+        author_id, 
+        published
+    );
+
+    if (!newPost || !newPost.id) {
+        throw new AppError("Не вдалося створити сутність публікації в базі даних", 500);
+    }
+
+    await Tag.addTagsToPost(newPost.id, tags);
     
-    return newPostId;
+    return newPost;
 }
 
 export const updatePost = async (id, title, short_description, preview, content, published, tags) => {
-    if (!id) throw new Error("ID не визначено");
-    
-    // Формуємо об'єкт для оновлення. 
-    // Якщо файл є - беремо шлях з Cloudinary, якщо ні - undefined (COALESCE в моделі спрацює)
-    const updateData = {
-        title,
-        short_description,
-        content,
-        preview: preview ? preview.path : undefined,
-        published 
-    };
+    if (!id) {
+        throw new BadRequestError("ID не визначено");
+    }
 
-    await Post.updatePost(id, updateData);
+    // Перевірка обов'язкових полів
+    const isBasicFieldsEmpty = !title || !short_description || !content || published === undefined;
+    const isTagsEmpty = !tags || tags.length === 0;
+    
+    if (isBasicFieldsEmpty || isTagsEmpty) {
+        throw new BadRequestError("Відсутні обов'язкові поля або не обрано жодного тега");
+    }
+
+    // Повне каскадне видалення пов'язаних медіа-файлів перед стиранням запису з БД
+    const currentPost = await Post.getPostInfoById(id);
+    if (!currentPost) {
+        throw new NotFoundError("Публикацію для оновлення не знайдено");
+    }
+
+    let previewPath = undefined;
+
+    if (preview) {
+        previewPath = preview.path;
+        try {
+            // Видалення старого прев'ю з Cloudinary
+            await deleteFileFromCloudinary(currentPost.preview);
+        } catch (err) {
+            console.error("Не вдалося видалити старе прев'ю з Cloudinary:", err);
+        }
+    }
+
+    const updatedPost = await Post.updatePost(
+        id,
+        {title, short_description, content, preview: previewPath, published}
+    );
+
     await Tag.updateTagsOfPost(id, tags);
+
+    return updatedPost;
 }   
 
 export const deletePost = async (id) => {
     if (!id) {
-        throw new Error("ID не визначено");
+        throw new BadRequestError("ID не визначено");
     }
+
+    //Повне каскадне видалення пов'язаних медіа-файлів перед стиранням запису з БД
+    const post = await Post.getPostInfoById(id);
+    if (post) {
+        try {
+            await deleteFileFromCloudinary(post.preview);
+        } catch (err) {
+            console.error("Не вдалося видалити прев'ю книги з Cloudinary:", err);
+        }
+    }
+
     await Post.deletePost(id);
 }

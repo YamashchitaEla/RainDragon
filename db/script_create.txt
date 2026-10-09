@@ -128,7 +128,7 @@ CREATE TABLE watch_list (
 
 -- TABLE comment
 CREATE TABLE comment (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY,
     parent_id INT,
     author_id INT NOT NULL,
     book_id INT,

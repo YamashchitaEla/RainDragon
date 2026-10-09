@@ -54,7 +54,9 @@ function Reader() {
     useEffect(() => {
         const init = async () => {
             try {
-                const response = await requestWithRefresh(`http://localhost:5000/api/text/${id}`);
+                const response = await requestWithRefresh(
+                    `http://localhost:5000/api/text/${id}`
+                );
                 if (!response.ok) {
                     setTextExists(false);
                     return;
@@ -65,7 +67,7 @@ function Reader() {
                 epubRef.current = epub;
                 await epub.ready;
 
-                // Параллельный парсинг всех глав
+                // Паралельний парсинг глав
                 const spineItemsWithClassification = await Promise.all(
                     epub.spine.items.map(async (item) => {
                         const section = await epub.load(item.href);
@@ -85,7 +87,7 @@ function Reader() {
                     })
                 );
 
-                // Фильтруем результаты после того, как все главы прочитались параллельно
+                // Фильтруємо результати
                 const filteredSpine = spineItemsWithClassification
                     .filter(result => result.type !== "illustration")
                     .map(result => result.item);
@@ -122,7 +124,7 @@ function Reader() {
         init();
     }, [id]);
 
-    // Класифікація розділу: текст, ілюстрація або змішаний
+    // Класифікація розділу
     function classifyChapter(doc) {
         if (!doc || !doc.body) return "mixed";
 
@@ -156,7 +158,7 @@ function Reader() {
 
         const type = classifyChapter(doc);
         if (type === "illustration") {
-            // пропускаємо цей розділ
+            // Пропускаємо цей розділ
             return;
         }
 

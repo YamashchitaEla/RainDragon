@@ -1,3 +1,5 @@
+import { pool } from "../db/db.js";
+
 export class Tag {
     // DTO - Data Transfer Object. Безпечна деструктуризація для фільтрації та нормалізації даних
     constructor(data) {
@@ -5,6 +7,7 @@ export class Tag {
             id = null,
             tag = null
         } = data || {};
+
         Object.assign(this, { id, tag });
     }
 
@@ -17,6 +20,7 @@ export class Tag {
             WHERE p.id = $1`, 
             [id]
         );
+
         return result.rows.map(row => new Tag(row));
     }
 
@@ -25,6 +29,7 @@ export class Tag {
             `SELECT id, tag 
             FROM tag`
         );
+
         return result.rows.map(row => new Tag(row));
     }
 
@@ -41,6 +46,7 @@ export class Tag {
         }).join(", ");
 
         const query = `INSERT INTO tag_list (post_id, tag_id) VALUES ${valueStrings}`;
+        
         await pool.query(query, values);
     }
 
@@ -54,10 +60,10 @@ export class Tag {
         try {
             await client.query('BEGIN');
 
-            // Спочатку видаляємо всі поточні зв'язки
+            // Спочатку видалити всі поточні зв'язки
             await client.query(`DELETE FROM tag_list WHERE post_id = $1`, [postId]);
             
-            // Потім додаємо нові зв'язки через динамічний SQL
+            // Додати нові зв'язки через динамічний SQL
             const values = [];
             const valueStrings = tags.map((tagId, index) => {
                 values.push(postId, tagId);
@@ -66,14 +72,15 @@ export class Tag {
             }).join(", ");
 
             const query = `INSERT INTO tag_list (post_id, tag_id) VALUES ${valueStrings}`;
+            
             await client.query(query, values);
 
             await client.query('COMMIT');
         } catch (error) {
-            await client.query('ROLLBACK'); // Відкат змін у разі системного збою
+            await client.query('ROLLBACK');
             throw error;
         } finally {
-            client.release(); // Обов'язкове звільнення клієнта назад у пул
+            client.release(); // Обов'язкове звільнення клієнта 
         }
     }
 }

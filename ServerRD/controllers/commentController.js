@@ -1,18 +1,12 @@
 import * as commentService from "../services/commentService.js";
-
-const handleControllerError = (res, err, contextMessage) => {
-    console.error(`${contextMessage}:`, err);
-    const statusCode = err.statusCode || 500; // Зчитуємо кастомний статус-код з сервісу, інакше 500
-    return res.status(statusCode).json({ 
-        success: false, 
-        message: err.message || "Внутрішня помилка сервера" 
-    });
-};
+import { handleControllerError } from '../utils/errorHandler.js';
 
 export const getBookComments = async (req, res) => {
     try {
         const { id } = req.params;
+        
         const comments = await commentService.getBookCommentsById(id);
+        
         return res.status(200).json({ 
             success: true, 
             comments 
@@ -25,7 +19,9 @@ export const getBookComments = async (req, res) => {
 export const getPostComments = async (req, res) => {
     try {
         const { id } = req.params;
+        
         const comments = await commentService.getPostCommentsById(id);
+        
         return res.status(200).json({ 
             success: true, 
             comments 
@@ -38,7 +34,9 @@ export const getPostComments = async (req, res) => {
 export const createComment = async (req, res) => {
     try {
         const { parent_id, author_id, book_id, post_id, text } = req.body;
+        
         const comment = await commentService.addComment({ parent_id, author_id, book_id, post_id, text });
+        
         return res.status(201).json({ 
             success: true, 
             comment 
@@ -51,7 +49,9 @@ export const createComment = async (req, res) => {
 export const deleteComment = async (req, res) => {
     try {
         const { id } = req.params;
+        
         await commentService.deleteCommentById(id);
+        
         return res.status(200).json({ 
             success: true, 
             id 

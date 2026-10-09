@@ -7,6 +7,7 @@ export const getWritersByBookId = (bookId) => {
     if (!bookId) {
         throw new BadRequestError("ID книги не визначено");
     }
+
     return Writer.getWriterByBookId(bookId);
 };
 
@@ -44,9 +45,10 @@ export const updateWriter = async (id, full_name, birthday) => {
         throw new BadRequestError("ID не визначено");
     }
 
-    const updatedWriter = await Writer.update(id, 
-        {full_name, birthday});
-    console.log("Updated Writer:", updatedWriter); // Додано для відлагодження
+    const updatedWriter = await Writer.update(
+        id, 
+        {full_name, birthday}
+    );
     
     if (!updatedWriter) {
         throw new NotFoundError("Письменника для оновлення не знайдено");

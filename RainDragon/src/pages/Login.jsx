@@ -26,20 +26,34 @@ function LoginPage() {
         try {
             let res = null;
             if (mode === "login") {
-                res = await fetch("http://localhost:5000/api/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ login, password, admin }),
-                });
+                res = await fetch(
+                    "http://localhost:5000/api/login", 
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            login, 
+                            password, 
+                            admin 
+                        }),
+                    }
+                );
             }
             else {
-                res = await fetch("http://localhost:5000/api/register", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ nickname, login, password }),
-                });
+                res = await fetch(
+                    "http://localhost:5000/api/register", 
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            nickname, 
+                            login, 
+                            password 
+                        }),
+                    }
+                );
             }
 
             const data = await res.json();

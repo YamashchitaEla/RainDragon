@@ -7,10 +7,16 @@ export class AppError extends Error {
 }
 
 export class BadRequestError extends AppError {
-    // Маємо повідомлення за замовчуванням, але можемо передати своє
+    // Повідомлення за замовчуванням, але можна передати власне
     constructor(message = "Некоректний запит") {
-        // Викликаємо конструктор батьківського класу з повідомленням та статусом 400 
+        // Викликати конструктор батьківського класу з повідомленням та статусом 400 
         super(message, 400); 
+    }
+}
+
+export class UnauthorizedError extends AppError {
+    constructor(message = "Необхідна авторизація") {
+        super(message, 401);
     }
 }
 

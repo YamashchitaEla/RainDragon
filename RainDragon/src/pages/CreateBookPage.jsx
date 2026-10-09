@@ -40,7 +40,9 @@ function CreateBookPage() {
         if (mode === "edit" && id) {
             const fetchBookData = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/book/${id}`);
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/book/${id}`
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         setBook(data.bookInfo || null);
@@ -58,9 +60,12 @@ function CreateBookPage() {
         if (mode === "edit" && book) {
             const fetchBookAuthors = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/writers/${book.id}`, {
-                        method: "GET"
-                    });
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/writers/${book.id}`, 
+                        {
+                            method: "GET"
+                        }
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         setSelectedAuthors(data.writers.map(w => w.id));
@@ -76,9 +81,12 @@ function CreateBookPage() {
         if (mode === "edit" && book) {
             const fetchGenres = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/genres/${id}`, {
-                        method: "GET"
-                    });
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/genres/${id}`, 
+                        {
+                            method: "GET"
+                        }
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         setSelectedGenres(data.genres.map(g => g.id));
@@ -96,14 +104,22 @@ function CreateBookPage() {
         const fetchData = async () => {
             try {
                 const [authRes, genRes] = await Promise.all([
-                    requestWithRefresh("http://localhost:5000/api/writers"),
-                    requestWithRefresh("http://localhost:5000/api/genres")
+                    requestWithRefresh(
+                        "http://localhost:5000/api/writers"
+                    ),
+                    requestWithRefresh(
+                        "http://localhost:5000/api/genres"
+                    )
                 ]);
                 const authData = await authRes.json();
                 const genData = await genRes.json();
 
-                if (authRes.ok) setAuthorsList(authData.writers || []);
-                if (genRes.ok) setGenresList(genData.genres || []);
+                if (authRes.ok) {
+                    setAuthorsList(authData.writers || []);
+                }
+                if (genRes.ok) {
+                    setGenresList(genData.genres || []);
+                }
             } catch (err) {
                 console.error("Помилка завантаження списків:", err);
             }

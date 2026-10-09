@@ -33,7 +33,9 @@ function PostPage() {
 
     const getInfoOfPost = async (postId) => {
         try {
-            const res = await requestWithRefresh(`http://localhost:5000/api/post/${postId}`);
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/post/${postId}`
+            );
             const data = await res.json();
             if (!res.ok) {
                 throw new Error(data.message);
@@ -48,7 +50,9 @@ function PostPage() {
     // Отримуємо теги поста
     const getTagsOfPost = async (postId) => {
         try {
-            const res = await requestWithRefresh(`http://localhost:5000/api/tags/${postId}`);
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/tags/${postId}`
+            );
             const data = await res.json();
             if (!res.ok) {
                 throw new Error(data.message);
@@ -84,9 +88,12 @@ function PostPage() {
         if (!window.confirm("Ви впевнені, що хочете видалити цю публікацію?")) return;
 
         try {
-            const res = await requestWithRefresh(`http://localhost:5000/api/post/delete/${postId}`, {
-                method: "DELETE",
-            });
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/post/delete/${postId}`, 
+                {
+                    method: "DELETE",
+                }
+            );
             if (res.ok) {
                 alert("Публікацію успішно видалено.");
                 navigate("/posts");
@@ -106,21 +113,26 @@ function PostPage() {
         try {
             // Отримуємо актуальний токен з localStorage
             const currentToken = localStorage.getItem("token");
-            if (!currentToken) return;
+            if (!currentToken) {
+                return;
+            }
             // Декодуємо ID користувача (можна зробити це безпосередньо перед запитом)
             const decoded = jwtDecode(currentToken);
 
             // Використовуємо функцію-обгортку замість звичайного fetch
-            const res = await requestWithRefresh(`http://localhost:5000/api/comments`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    parent_id: null,
-                    author_id: decoded.userId,
-                    post_id: id,
-                    text: newComment,
-                }),
-            });
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/comments`, 
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        parent_id: null,
+                        author_id: decoded.userId,
+                        post_id: id,
+                        text: newComment,
+                    }),
+                }
+            );
 
             // Обробка відповіді
             if (res.ok) {
@@ -148,7 +160,9 @@ function PostPage() {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await requestWithRefresh(`http://localhost:5000/api/comments/post/${id}`);
+                const res = await requestWithRefresh(
+                    `http://localhost:5000/api/comments/post/${id}`
+                );
                 const data = await res.json();
 
                 if (res.ok) {
@@ -166,9 +180,12 @@ function PostPage() {
 
     const handleDeleteComment = async (commentId) => {
         try {
-            const res = await requestWithRefresh(`http://localhost:5000/api/comments/${commentId}`, {
-                method: "DELETE",
-            });
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/comments/${commentId}`, 
+                {
+                    method: "DELETE",
+                }
+            );
 
             if (res.ok) {
                 // Рекурсивна функція для видалення коментаря з будь-якого рівня вкладеності
@@ -194,16 +211,20 @@ function PostPage() {
 
     const handleUpdateComment = async (commentId, newText) => {
         try {
-            const res = await requestWithRefresh(`http://localhost:5000/api/comments/${commentId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: newText }), // Відправляємо новий текст
-            });
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/comments/${commentId}`, 
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        text: newText 
+                    }), // Відправляємо новий текст
+                }
+            );
 
             if (res.ok) {
                 // Оскільки сервер повертає лише {"success":true...}, 
                 // ми просто використовуємо наш локальний newText для оновлення стейту
-
                 const updateById = (list) => {
                     return list.map((c) => {
                         if (c.id === commentId) {
@@ -232,19 +253,24 @@ function PostPage() {
         if (!replyText.trim()) return;
         try {
             const currentToken = localStorage.getItem("token");
-            if (!currentToken) return;
+            if (!currentToken) {
+                return;
+            }
             const decoded = jwtDecode(currentToken);
 
-            const res = await requestWithRefresh(`http://localhost:5000/api/comments`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    parent_id: parentId,
-                    author_id: decoded.userId,
-                    post_id: id,
-                    text: replyText,
-                }),
-            });
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/comments`, 
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        parent_id: parentId,
+                        author_id: decoded.userId,
+                        post_id: id,
+                        text: replyText,
+                    }),
+                }
+            );
 
             // Обробка відповіді
             if (res.ok) {
@@ -274,7 +300,9 @@ function PostPage() {
 
                 setComments((prev) => {
                     // Якщо parent_id немає — це основний коментар, додаємо в корінь
-                    if (!parentId) return [newReply, ...prev];
+                    if (!parentId) {
+                        return [newReply, ...prev];
+                    }
                     // Якщо є parent_id — шукаємо куди вставити
                     return insertReply(prev, parentId, newReply);
                 });

@@ -29,18 +29,20 @@ function Profile() {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
-                // 1. Завантаження даних користувача
-                const userRes = await requestWithRefresh(`http://localhost:5000/api/users/${id}`, {
-                    method: "GET"
-                });
+                // Завантаження даних користувача
+                const userRes = await requestWithRefresh(
+                    `http://localhost:5000/api/users/${id}`
+                );
                 const userData = await userRes.json();
-                if (userRes.ok) setUser(userData.user);
+                if (userRes.ok) {
+                    setUser(userData.user);
+                }
 
-                // 2. Завантаження списку книг (тільки якщо власник)
+                // Завантаження списку книг (тільки якщо власник)
                 if (isOwner) {
-                    const listRes = await requestWithRefresh(`http://localhost:5000/api/watchlist/user/${id}`, {
-                        method: "GET"
-                    });
+                    const listRes = await requestWithRefresh(
+                        `http://localhost:5000/api/watchlist/user/${id}`
+                    );
                     const listData = await listRes.json();
                     if (listRes.ok) {
                         setWatchList(listData.watchlist || []);
@@ -50,7 +52,6 @@ function Profile() {
                 console.error("Помилка завантаження профілю:", err);
             }
         };
-
         fetchProfileData();
     }, [id, isOwner]);
 
@@ -141,10 +142,13 @@ function Profile() {
                 formData.append("avatar", resizedFile);
             }
             console.time("TOTAL");
-            const response = await requestWithRefresh(`http://localhost:5000/api/user/update/${id}`, {
-                method: "PUT",
-                body: formData
-            });
+            const response = await requestWithRefresh(
+                `http://localhost:5000/api/user/update/${id}`, 
+                {
+                    method: "PUT",
+                    body: formData
+                }
+            );
             console.timeEnd("TOTAL");
 
             if (response.ok) {
@@ -170,14 +174,18 @@ function Profile() {
 
     // Обробник виходу з акаунту
     const handleLogout = async () => {
-        if (!window.confirm("Ви впевнені, що хочете вийти?")) return;
+        if (!window.confirm("Ви впевнені, що хочете вийти?")) {
+            return;
+        }
 
         try {
-            // Викликаємо бекенд, щоб видалити HttpOnly куку
-            await fetch("http://localhost:5000/api/logout", {
-                method: "POST",
-                credentials: "include", // ОБОВ'ЯЗКОВО для роботи з куками
-            });
+            // Викликаємо бекенд, щоб видалити HttpOnly кукі
+            await fetch(
+                "http://localhost:5000/api/logout", 
+                {
+                    method: "POST",
+                    credentials: "include", 
+                });
         } catch (err) {
             console.error("Помилка при виході на сервері:", err);
         } finally {

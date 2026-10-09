@@ -33,7 +33,9 @@ function CreateWriter() {
         if (mode === "edit" && id) {
             const fetchWriterData = async () => {
                 try {
-                    const res = await requestWithRefresh(`http://localhost:5000/api/writer/${id}`);
+                    const res = await requestWithRefresh(
+                        `http://localhost:5000/api/writer/${id}`
+                    );
                     if (res.ok) {
                         const data = await res.json();
                         setWriter(data.writerInfo || null);

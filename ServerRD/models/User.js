@@ -31,7 +31,9 @@ export class User {
             `SELECT id, nickname, about, login, password, admin, avatar 
             FROM "user" 
             WHERE id = \$1`, 
-            [id]);
+            [id]
+        );
+
         return result.rows[0] ? new User(result.rows[0]) : null;
     }
 
@@ -42,12 +44,12 @@ export class User {
             RETURNING *`,
             [nickname, login, password, false]
         );
+        
         return new User(result.rows[0]);
     }
 
     static async update(id, { nickname, about, avatar }) {
         const values = [nickname, about, avatar, id];
-        // Додаємо RETURNING в кінці запиту
         // Якщо $1 не NULL — постав $1? інакше старе
         const query = `
         UPDATE "user" 
