@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { requestWithRefresh } from "../api/requestWithRefresh";
 import "../styles/pages/_contacts.css";
 
 function ContactsPage() {
@@ -24,7 +23,7 @@ function ContactsPage() {
         e.preventDefault();
         setSending(true);
         try {
-            const res = await requestWithRefresh(
+            const res = await fetch(
                 "http://localhost:5000/api/contacts", 
                 {
                     method: "POST",

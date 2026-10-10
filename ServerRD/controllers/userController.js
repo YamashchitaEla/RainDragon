@@ -1,5 +1,5 @@
 import { findUserByIdService, updateProfileService } from "../services/userService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getUserById = async (req, res) => {
     try {

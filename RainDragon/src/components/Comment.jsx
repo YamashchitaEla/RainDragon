@@ -1,29 +1,21 @@
 import { useState } from "react";
-import { jwtDecode } from "jwt-decode"; // Імпортуємо бібліотеку
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/components/_comment.css";
 
 function Comment({ comment, onReplySubmit, onDelete, onUpdate }) {
     const navigate = useNavigate();
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState(comment.text);
+    const [isReplying, setIsReplying] = useState(false);
+    const [replyText, setReplyText] = useState("");
     
-    // Отримуємо дані користувача з токена
-    const token = localStorage.getItem("token");
-    let currentUser = null;
-
-    if (token) {
-        try {
-            currentUser = jwtDecode(token);
-        } catch (error) {
-            console.error("Invalid token");
-        }
-    }
-
-    // Перевірка, чи є користувач власником коментаря
+    const { currentUser, isAdmin } = useAuth();
+    const isLoggedIn = Boolean(currentUser);
     const isOwner = currentUser && String(currentUser.userId) === String(comment.author_id);
 
-    // Стан для редагування
-    const [isEditing, setIsEditing] = useState(false);
-    const [editText, setEditText] = useState(comment.text);;
+    // Редагування
     const canEdit = isOwner;
     const handleUpdate = () => {
         if (editText.trim() && editText !== comment.text) {
@@ -32,19 +24,16 @@ function Comment({ comment, onReplySubmit, onDelete, onUpdate }) {
         setIsEditing(false);
     };
 
-    const canDelete = currentUser && (
-        currentUser.userId === comment.author_id ||
-        currentUser.admin === true
-    );
+    // Видалення
+    const canDelete = currentUser && isAdmin;
+
     const handleDelete = () => {
         if (window.confirm("Ви впевнені, що хочете видалити цей коментар?")) {
             onDelete(comment.id);
         }
     }
     
-    // Стан для відповіді
-    const [isReplying, setIsReplying] = useState(false);
-    const [replyText, setReplyText] = useState("");
+    // Відповіді
     const handleReply = () => {
         if (replyText.trim()) {
             onReplySubmit(comment.id, replyText);
@@ -52,8 +41,6 @@ function Comment({ comment, onReplySubmit, onDelete, onUpdate }) {
             setIsReplying(false);
         }
     };
-
-    // Функція для скасування відповіді
     const handleCancel = () => {
         setReplyText("");
         setIsReplying(false);
@@ -110,9 +97,11 @@ function Comment({ comment, onReplySubmit, onDelete, onUpdate }) {
                         <p className="comment__text">{comment.text}</p>
                     )}
 
-                    <button className="comment__reply-btn" onClick={() => setIsReplying(!isReplying)}>
-                        <i className="fa-solid fa-reply"></i> Відповісти
-                    </button>
+                    {isLoggedIn && (
+                        <button className="comment__reply-btn" onClick={() => setIsReplying(!isReplying)}>
+                            <i className="fa-solid fa-reply"></i> Відповісти
+                        </button>)
+                    }
 
                     {isReplying && (
                         <div className="comment__reply-input-wrapper">

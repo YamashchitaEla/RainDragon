@@ -8,35 +8,31 @@ function CreateBookPage() {
     const { id } = useParams(); // Отримуємо ID з URL
     const navigate = useNavigate();
     const location = useLocation();
-    
+
+    const { currentUser, isAdmin, authChecked } = useAuth();
+
     // Визначаємо режим на основі наявності ID або переданого стану
     const mode = location.state?.mode || (id ? "edit" : "create");
-
-    // Перевірка на адміна
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const currentUser = jwtDecode(token);
-        const isAdmin = currentUser.admin === true;
-        if (!isAdmin) {
-            alert("У вас немає прав для доступу до цієї сторінки.");
-            window.location.href = "/"; // Перенаправлення на головну сторінку
-        }
-    }, []);
 
     const [book, setBook] = useState(null);
     const [preview, setPreview] = useState(null);
     const [text, setText] = useState(null);
-
-    // Список авторів та жанрів для вибору
     const [authorsList, setAuthorsList] = useState([]);
     const [genresList, setGenresList] = useState([]);
-
-    // Обрані автори та жанри для книги
     const [selectedAuthors, setSelectedAuthors] = useState([]);
     const [selectedGenres, setSelectedGenres] = useState([]);
 
     // Завантаження даних книги при редагуванні
     useEffect(() => {
+        if (!authChecked) {
+            return;
+        }
+
+        if (!isAdmin){
+            alert("У вас немає прав для доступу до цієї сторінки.");
+            window.location.href = "/"; // Перенаправлення на головну сторінку
+        }
+
         if (mode === "edit" && id) {
             const fetchBookData = async () => {
                 try {
@@ -190,6 +186,12 @@ function CreateBookPage() {
             console.error("Помилка відправки:", err);
         }
     };
+
+    if (!authChecked) {
+        return <div className="no-results">
+                    <p>На жаль, за вашим запитом нічого не знайдено.</p>
+                </div>;
+    }
 
     return (
         <div className="create-book-page">

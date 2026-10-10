@@ -1,5 +1,5 @@
 import Layout from "./components/Layout";
-import StartPage from "./pages/Start.jsx"
+import BecomePage from "./pages/Become.jsx"
 import LoginPage from "./pages/Login.jsx";
 import MainPage from "./pages/Main.jsx";
 
@@ -25,13 +25,12 @@ import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-// children - це те, що буде всередині Layout, hideFooter - це пропс для того, щоб приховати Footer на певних сторінках (наприклад, на стартовій та логіні)
+// children - те, що буде всередині Layout, hideFooter - це пропс для того, щоб приховати Footer на певних сторінках (наприклад, на стартовій та логіні)
 function App() {
 
     const { pathname } = useLocation();
 
   useEffect(() => {
-    // Прокручуємо і window, і html, і body про всяк випадок
     window.scrollTo(0, 0);
     document.documentElement.scrollTo(0, 0);
     document.body.scrollTo(0, 0);
@@ -39,9 +38,9 @@ function App() {
   
     return (
         <Routes>
-            <Route path="/" element={ <Layout hideHeader={true} hideFooter={true}> <StartPage /></Layout>}></Route>
+            <Route path="/" element={<Layout> <MainPage /> </Layout>}></Route>
+            <Route path="/become_dragon" element={ <Layout hideHeader={true} hideFooter={true}> <BecomePage /></Layout>}></Route>
             <Route path="/login" element={<Layout hideHeader={true} hideFooter={true}> <LoginPage/> </Layout>}></Route>
-            <Route path="/main" element={<Layout> <MainPage /> </Layout>}></Route>
             <Route path="/books" element={<Layout> <Books /> </Layout>}></Route>
             <Route path="/posts" element={<Layout> <Posts /> </Layout>}></Route>
             <Route path="/posts/drafts" element={<Layout> <PostsDrafts /> </Layout>}></Route>

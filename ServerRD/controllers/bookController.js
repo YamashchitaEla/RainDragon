@@ -1,5 +1,5 @@
 import * as bookService from "../services/bookService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getLatestBooks = async (req, res) => {
     try {

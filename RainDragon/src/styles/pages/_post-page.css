@@ -417,6 +417,62 @@
     text-shadow: 0 0 5px var(--border);
 }
 
+.page-post__login-message {
+    margin: 0;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    background-color: rgba(255, 255, 255, 0.02);
+
+    color: var(--text);
+    font-family: "Memory", "Times New Roman", Times, serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+.page-post__login-link {
+    display: inline;
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    background: none;
+
+    color: var(--accent);
+    font-family: "SanghaKali", "Times New Roman", Times, serif;
+    font-size: 1.1rem;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.3s ease,
+        text-shadow 0.3s ease;
+}
+
+.page-post__login-link:hover {
+    color: var(--text);
+    text-shadow:
+        0 0 5px var(--accent),
+        0 0 10px var(--border);
+}
+
+.page-post__login-link:active {
+    color: var(--accent);
+    text-shadow: none;
+}
+
+.page-post__login-link:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
 
 .page-post__comment-create {
     display: flex;

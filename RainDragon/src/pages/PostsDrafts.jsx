@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import DraftCard from "../cards/DraftCard";
 import "../styles/pages/_posts-drafts.css";
@@ -8,27 +8,25 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function PostsDrafts() {
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
+
+    const { currentUser, isAdmin, authChecked } = useAuth();
 
     const [allDrafts, setAllDrafts] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const currentPage = Number(searchParams.get("page")) || 1;
     const draftsPerPage = 8;
 
-    const token = localStorage.getItem("token");
-    const currentUser = jwtDecode(token);
-    const isAdmin = currentUser.admin === true;
-    // Перевірка на адміна
     useEffect(() => {
-        if (!isAdmin) {
+        if (!authChecked) {
+            return;
+        }
+
+        if (!isAdmin){
             alert("У вас немає прав для доступу до цієї сторінки.");
             window.location.href = "/"; // Перенаправлення на головну сторінку
         }
-    }, []);
 
-    const id = currentUser.userId;
-
-    useEffect(() => {
         const fetchDrafts = async (id) => {
             try {
                 const res = await requestWithRefresh(
@@ -43,8 +41,8 @@ function PostsDrafts() {
                 return [];
             }
         };
-        fetchDrafts(id);
-    }, []);
+        fetchDrafts(currentUser.userId);
+    }, [authChecked, isAdmin, currentUser?.userId]);
 
     // Фільтрація
     const filteredDrafts = useMemo(() => {
@@ -76,6 +74,12 @@ function PostsDrafts() {
         const search = searchParams.get("search") || "";
         setSearchTerm(search);
     }, [searchParams]);
+
+    if (!authChecked) {
+        return <div className="no-results">
+                    <p>На жаль, за вашим запитом нічого не знайдено.</p>
+                </div>;
+    }
 
     return (
         <div className="drafts-page">
@@ -149,15 +153,13 @@ function PostsDrafts() {
             )}
 
             {/* Кнопка додавання */}
-            {isAdmin && (
-                <button
-                    className="page-drafts__btn--add"
-                    onClick={() => navigate(`/upload/post/`, { state: { mode: "create" } })}
-                    title="Додати новий пост"
-                >
+            <button
+                className="page-drafts__btn--add"
+                onClick={() => navigate(`/upload/post/`, { state: { mode: "create" } })}
+                title="Додати новий пост"
+            >
                     <i className="fas fa-plus"></i>
-                </button>
-            )}
+            </button>
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import { loginService, registerService } from "../services/authService.js";
-import { handleControllerError } from "../utils/errorHandler.js";
+import { handleControllerError } from '../utils/errorHelper.js';
 import jwt from "jsonwebtoken";
 
 export const login = async (req, res) => {

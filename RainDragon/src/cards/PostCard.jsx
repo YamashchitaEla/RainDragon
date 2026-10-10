@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function PostCard({ preview, title, short_description, id }) {
     const navigate = useNavigate();
+    
     return (
         <div className="post-card" onClick={() => navigate(`/post/${id}`)}>
             <div className="post-card__preview">

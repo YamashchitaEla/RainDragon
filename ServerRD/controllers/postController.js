@@ -1,5 +1,5 @@
 import * as postService from "../services/postService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getLatestPosts = async (req, res) => {
     try {

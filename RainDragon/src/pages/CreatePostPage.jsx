@@ -10,32 +10,28 @@ function CreatePostPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const { currentUser, isAdmin, authChecked } = useAuth();
+    
     // Визначаємо режим на основі наявності ID або переданого стану
     const mode = location.state?.mode || (id ? "edit" : "create");
 
-    const token = localStorage.getItem("token");
-    const currentUser = jwtDecode(token);
-    const isAdmin = currentUser.admin === true;
-
-    // Перевірка на адміна
-    useEffect(() => {
-        if (!isAdmin) {
-            alert("У вас немає прав для доступу до цієї сторінки.");
-            window.location.href = "/"; // Перенаправлення на головну сторінку
-        }
-    }, []);
-
     const [post, setPost] = useState(null);
-    
     const [preview, setPreview] = useState(null);
     const [published, setPublished] = useState(false); 
-
-    // Список тегів + обраних для вибору
     const [tagsList, setTagsList] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
 
     // Завантаження даних поста при редагуванні
     useEffect(() => {
+        if (!authChecked) {
+            return;
+        }
+
+        if (!isAdmin){
+            alert("У вас немає прав для доступу до цієї сторінки.");
+            window.location.href = "/"; // Перенаправлення на головну сторінку
+        }
+
         if (mode === "edit" && id) {
             const fetchPostData = async () => {
                 try {
@@ -61,7 +57,7 @@ function CreatePostPage() {
             };
             fetchPostData();
         }
-    }, [id, mode]);
+    }, [authChecked, isAdmin, id, mode]);
 
     // Завантаження тегів посту
     useEffect(() => {
@@ -171,6 +167,12 @@ function CreatePostPage() {
             console.error("Помилка відправки:", err);
         }
     };
+
+    if (!authChecked) {
+        return <div className="no-results">
+                    <p>На жаль, за вашим запитом нічого не знайдено.</p>
+                </div>;
+    }
 
     return (
         <div className="create-post-page">

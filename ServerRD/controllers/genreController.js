@@ -1,5 +1,5 @@
 import * as genreService from "../services/genreService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getGenres = async (req, res) => {
     try {

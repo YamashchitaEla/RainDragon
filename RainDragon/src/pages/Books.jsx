@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { requestWithRefresh } from "../api/requestWithRefresh";
+import { useAuth } from "../context/AuthContext";
 import BookCard from "../cards/BookCard";
 import '../styles/pages/_books.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -10,6 +9,8 @@ function Books() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const { isAdmin } = useAuth();
+
     const [allBooks, setAllBooks] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [genresList, setGenresList] = useState([]);
@@ -17,11 +18,7 @@ function Books() {
     const currentPage = Number(searchParams.get("page")) || 1;
     const booksPerPage = 12;
 
-    const token = localStorage.getItem("token");
-    const currentUser = jwtDecode(token);
-    const isAdmin = currentUser.admin === true;
-
-    // Якщо в url жанр, то додаємо (натискання у блоці жанрів книги також сюди)
+    // Якщо в url жанр, то додати (натискання у блоці жанрів книги також сюди)
     useEffect(() => {
         const genresParam = searchParams.get("genres");
         if (genresParam) {
@@ -48,17 +45,16 @@ function Books() {
             params.delete("genres");
         }
 
-        // При зміні фільтру починаємо з 1 сторінки
+        // При зміні фільтру починати з 1 сторінки
         params.set("page", "1");
 
         setSearchParams(params);
     };
 
-    // Завантажуємо жанри ОДИН раз при монтуванні
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     "http://localhost:5000/api/genres"
                 );
                 const data = await res.json();
@@ -70,7 +66,7 @@ function Books() {
         fetchGenres();
     }, []);
 
-    // Завантажуємо книги щоразу, коли змінюється selectedGenres
+    // Завантажувати щоразу, коли змінюється selectedGenres
     useEffect(() => {
         const fetchBooks = async () => {
             try {
@@ -80,7 +76,7 @@ function Books() {
                     url += `?genres=${selectedGenres.join(",")}`;
                 }
 
-                const res = await requestWithRefresh(url);
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (res.ok) {

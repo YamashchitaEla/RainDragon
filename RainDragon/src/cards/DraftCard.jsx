@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function DraftCard({ preview, title, short_description, id }) {
     const navigate = useNavigate();
+    
     return (
         <div className="draft-card" onClick={() => navigate(`/upload/post/${id}`, { state: { mode: "edit" }})}>
             <div className="draft-card__preview">
