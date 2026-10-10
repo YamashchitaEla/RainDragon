@@ -1,27 +1,24 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { requestWithRefresh } from "../api/requestWithRefresh";
+import { useAuth } from "../context/AuthContext";
 import PostCard from "../cards/PostCard";
 import "../styles/pages/_posts.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function Posts() {
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
 
+    const { isAdmin } = useAuth();
+    
     const [allPosts, setAllPosts] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [tagsList, setTagsList] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const currentPage = Number(searchParams.get("page")) || 1;
     const postsPerPage = 8;
 
-    const token = localStorage.getItem("token");
-    const currentUser = jwtDecode(token);
-    const isAdmin = currentUser.admin === true;
-
-    // Якщо в url тег, то додаємо (натискання у блоці тегов поста)
+    // Якщо в url тег, то додати (натискання у блоці тегов поста)
     useEffect(() => {
         const tagsParam = searchParams.get("tags");
 
@@ -49,17 +46,16 @@ function Posts() {
             params.delete("tags");
         }
 
-        // При зміні фільтру починаємо з 1 сторінки
+        // При зміні фільтру починати з 1 сторінки
         params.set("page", "1");
 
         setSearchParams(params);
     };
 
-    // Завантажуємо теги ОДИН раз при монтуванні
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     "http://localhost:5000/api/tags"
                 );
                 const data = await res.json();
@@ -73,7 +69,7 @@ function Posts() {
         fetchTags();
     }, []);
 
-    // Завантажуємо пости щоразу, коли змінюється selectedTags
+    // Завантажувати пости щоразу, коли змінюється selectedTags
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -83,7 +79,7 @@ function Posts() {
                     url += `?tags=${selectedTags.join(",")}`;
                 }
 
-                const res = await requestWithRefresh(url);
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (res.ok) {

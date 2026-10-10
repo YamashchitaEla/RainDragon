@@ -1,28 +1,25 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { requestWithRefresh } from "../api/requestWithRefresh";
+import { useAuth } from "../context/AuthContext";
 import WriterCard from "../cards/WriterCard";
 import '../styles/pages/_writers.css'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Writers() {
     const navigate = useNavigate();
+
+    const { isAdmin } = useAuth();
     
     const [allWriters, setAllWriters] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const writersPerPage = 12;
 
-    const token = localStorage.getItem("token");
-    const currentUser = token ? jwtDecode(token) : { admin: false };
-    const isAdmin = currentUser.admin === true;
-
     // Завантаження авторів
     useEffect(() => {
         const fetchWriters = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     "http://localhost:5000/api/writers"
                 );
                 const data = await res.json();

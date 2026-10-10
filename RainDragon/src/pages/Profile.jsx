@@ -1,31 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import BookCard from "../cards/BookCard";
 import '../styles/pages/_profile.css'; // Створіть цей файл для стилів
 
 function Profile() {
-    const { id } = useParams(); // ID профілю, який ми переглядаємо
+    const { id } = useParams(); 
     const navigate = useNavigate();
 
-    const [user, setUser] = useState(null);
-    const [watchList, setWatchList] = useState([]);
-
-    // Отримання даних поточного користувача з токена
-    const token = localStorage.getItem("token");
-    let currentUser = null;
-    if (token) {
-        try {
-            currentUser = jwtDecode(token);
-        } catch (e) {
-            console.error("Помилка декодування токена");
-        }
-    }
-
+    const { currentUser, isAdmin } = useAuth();
     const isOwner = currentUser && String(currentUser.userId) === String(id);
 
-    // Завантаження даних профілю та списку книг
+    const [user, setUser] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [newNickname, setNewNickname] = useState("");
+    const [newAbout, setNewAbout] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [watchList, setWatchList] = useState([]);
+
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
@@ -55,12 +49,6 @@ function Profile() {
         fetchProfileData();
     }, [id, isOwner]);
 
-    const [editMode, setEditMode] = useState(false);
-    const [newNickname, setNewNickname] = useState("");
-    const [newAbout, setNewAbout] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [avatarUrl, setAvatarUrl] = useState(null);
-
     useEffect(() => {
         if (user) {
             setNewNickname(user.nickname || "");
@@ -73,7 +61,8 @@ function Profile() {
         const file = e.target.files[0];
         if (file) {
             setSelectedFile(file);
-            setAvatarUrl(URL.createObjectURL(file)); // Тимчасове прев'ю
+            // Тимчасове прев'ю
+            setAvatarUrl(URL.createObjectURL(file));
         }
     };
 
@@ -84,12 +73,12 @@ function Profile() {
             const canvas = document.createElement("canvas");
             const reader = new FileReader();
 
-            // Завантажуємо зображення у img.src через FileReader, щоб отримати Data URL
+            // Завантаження зображення у img.src через FileReader, щоб отримати Data URL
             reader.onload = (e) => {
                 img.src = e.target.result;
             };
 
-            // Коли зображення завантажено, змінюємо його розмір
+            // Коли зображення завантажено, змінити його розмір
             img.onload = () => {
                 // У скільки разів потрібно зменшити зображення, щоб воно відповідало maxSize
                 // Приклад: якщо ширина 600px, а maxSize 300px, то ratio = 0.5
@@ -101,14 +90,14 @@ function Profile() {
                 canvas.width = img.width * ratio;
                 canvas.height = img.height * ratio;
 
-                // Малюємо зображення на canvas з новими розмірами
+                // Додати зображення на canvas з новими розмірами
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                 canvas.toBlob(
                     (blob) => {
                         if (blob) {
-                            // Створюємо новий файл з Blob і передаємо його далі
+                            // Створити новий файл з Blob і передаємо його далі
                             resolve(
                                 new File([blob], file.name, {
                                     type: "image/jpeg"
@@ -127,7 +116,7 @@ function Profile() {
             img.onerror = reject;
             reader.onerror = reject;
 
-            // Запускаємо читання файлу, що призведе до виклику reader.onload
+            // Запустити читання файлу, що призведе до виклику reader.onload
             reader.readAsDataURL(file);
         });
     };
@@ -179,7 +168,7 @@ function Profile() {
         }
 
         try {
-            // Викликаємо бекенд, щоб видалити HttpOnly кукі
+            // Видалити HttpOnly кукі
             await fetch(
                 "http://localhost:5000/api/logout", 
                 {
@@ -191,6 +180,7 @@ function Profile() {
         } finally {
             // У будь-якому випадку чистимо локальні дані
             localStorage.removeItem("token");
+            window.dispatchEvent(new Event("authChanged"));
             navigate("/");
             window.location.reload();
         }

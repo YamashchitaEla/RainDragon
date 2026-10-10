@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { requestWithRefresh } from "../api/requestWithRefresh";
 import BookCard from "../cards/BookCard";
 import '../styles/pages/_main.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function MainPage() {
+    const navigate = useNavigate();
+
     const [books, setBooks] = useState([]);
+    const [topBooks, setTopBooks] = useState([]);
+    
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     "http://localhost:5000/api/books_latest"
                 );
 
@@ -28,11 +31,10 @@ function MainPage() {
         fetchBooks(); // не забудь викликати функцію
     }, []); // порожній масив => виконається один раз при монтуванні 
 
-    const [topBooks, setTopBooks] = useState([]);
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     "http://localhost:5000/api/books_top"
                 );
 
@@ -49,8 +51,6 @@ function MainPage() {
 
         fetchBooks(); 
     }, []); 
-
-    const navigate = useNavigate();
 
     return (
         <div className="main-page">

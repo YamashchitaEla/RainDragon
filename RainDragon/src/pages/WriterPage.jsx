@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import BookCard from "../cards/BookCard";
 import dayjs from 'dayjs';
@@ -13,31 +13,16 @@ function WriterPage() {
     const navigate = useNavigate();
     dayjs.extend(utc);
 
+    const { isAdmin } = useAuth();
+
     const [writer, setWriter] = useState(null);
     const [writerBooks, setWriterBooks] = useState([]);
-    const [isAdmin, setIsAdmin] = useState(false); // Стан для адміна
 
-    // Перевірка ролі при завантаженні або зміні токена
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                // Припускаємо, що в токені роль лежить у полі role
-                if (decoded.admin === true) {
-                    setIsAdmin(true);
-                }
-            } catch (err) {
-                console.error("Помилка декодування токена:", err);
-            }
-        }
-    }, []);
-
-    // Отримуємо токен з localStorage і декодуємо його, щоб перевірити роль користувача
+    // Завантаження даних
     useEffect(() => {
         const fetchWriterData = async () => {
             try {
-                const writerRes = await requestWithRefresh(
+                const writerRes = await fetch(
                     `http://localhost:5000/api/writer/${id}`
                 );
                 const writerData = await writerRes.json();
@@ -45,7 +30,7 @@ function WriterPage() {
                     setWriter(writerData.writerInfo);
                 }
 
-                const booksRes = await requestWithRefresh(
+                const booksRes = await fetch(
                     `http://localhost:5000/api/books/writer/${id}`
                 );
                 const booksData = await booksRes.json();
@@ -60,9 +45,12 @@ function WriterPage() {
         fetchWriterData();
     }, [id]);
 
-    // Обробник видалення автора
+    // Видалення автора
     const handleDeleteWriter = async (writerId) => {
-        if (!window.confirm("Ви впевнені, що хочете видалити цього автора?")) return;
+        if (!window.confirm("Ви впевнені, що хочете видалити цього автора?")) {
+            return;
+        }
+        
         try {
             const res = await requestWithRefresh(
                 `http://localhost:5000/api/writer/delete/${writerId}`, 

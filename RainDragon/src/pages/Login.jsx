@@ -7,6 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function LoginPage() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const mode = location.state.mode;
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -15,9 +17,6 @@ function LoginPage() {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    // Об'єкт location для отримання даних про поточну локацію (дані НЕ з URL)s
-    const location = useLocation();
-    const mode = location.state.mode;
 
     // Функція для обробки форми входу/реєстрації
     const handleLogin = async (e) => {
@@ -63,6 +62,7 @@ function LoginPage() {
             }
 
             localStorage.setItem("token", data.accessToken);
+            window.dispatchEvent(new Event("authChanged"));
 
             setTimeout(() => {
                 navigate("/main");

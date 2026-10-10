@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import BookCard from "../cards/BookCard";
 import Comment from "../components/Comment";
@@ -13,21 +13,11 @@ import '../styles/pages/_book-page.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function BookPage() {
-    // Дані находяться в URL
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Декодуємо токен для отримання інформації про користувача
-    const token = localStorage.getItem("token");
-    let currentUser = null;
-    if (token) {
-        try {
-            currentUser = jwtDecode(token);
-        } catch (e) {
-            console.error("Невалідний токен:", e);
-        }
-    }
-    const isAdmin = currentUser?.admin === true;
+    const { currentUser, isAdmin } = useAuth();
+    const isLoggedIn = Boolean(currentUser);
 
     const [book, setBook] = useState(null);
     const [genres, setGenres] = useState([]);
@@ -196,15 +186,14 @@ function BookPage() {
     // Завантаження статусу
     useEffect(() => {
         const fetchUserStatus = async () => {
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken || !id) {
-                return; // Не робимо запит, якщо немає токена або ID книги
+            if (!currentUser) {
+                setUserStatus("");
+                return;
             }
-
+            
             try {
-                const decoded = jwtDecode(currentToken);
                 const res = await requestWithRefresh(
-                    `http://localhost:5000/api/watchlist/${decoded.userId}/${id}`
+                    `http://localhost:5000/api/watchlist/${currentUser.userId}/${id}`
                 );
                 if (res.ok) {
                     const data = await res.json();
@@ -219,20 +208,14 @@ function BookPage() {
     }, [id]); // Залежність тільки від ID книги з URL
 
     const handleStatusChange = async (newStatus) => {
-        const currentToken = localStorage.getItem("token");
-        if (!currentToken) {
-            return;
-        }
-
         try {
-            const decoded = jwtDecode(currentToken);
             const res = await requestWithRefresh(
                 `http://localhost:5000/api/watchlist/update`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        user_id: decoded.userId,
+                        user_id: currentUser.userId,
                         book_id: id,
                         status: newStatus,
                     }),
@@ -249,15 +232,14 @@ function BookPage() {
     // Оцінка
     useEffect(() => {
         const fetchUserRating = async () => {
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken || !id) {
+            if (!currentUser) {
+                setUserStatus("");
                 return;
             }
 
             try {
-                const decoded = jwtDecode(currentToken);
                 const res = await requestWithRefresh(
-                    `http://localhost:5000/api/rating/${decoded.userId}/${id}`
+                    `http://localhost:5000/api/rating/${currentUser.userId}/${id}`
                 );
 
                 if (res.ok) {
@@ -284,8 +266,6 @@ function BookPage() {
         }
 
         try {
-            const decoded = jwtDecode(currentToken);
-
             // Если нажали на уже выбранную звезду — удаляем оценку
             const newRating = userRating === rating ? 0 : rating;
 
@@ -297,7 +277,7 @@ function BookPage() {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        user_id: decoded.userId,
+                        user_id: currentUser.userId,
                         book_id: id,
                         rate: newRating,
                     }),
@@ -320,22 +300,33 @@ function BookPage() {
     };
 
     // Коментарі
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const res = await requestWithRefresh(
+                    `http://localhost:5000/api/comments/book/${id}`
+                );
+                const data = await res.json();
+
+                if (res.ok) {
+                    setComments(data.comments || []);
+                } else {
+                    console.error("Сервер повернув помилку:", data.message);
+                }
+            } catch (err) {
+                console.error("Помилка завантаження коментарів:", err);
+            }
+        };
+
+        fetchComments();
+    }, [id]);
+
     const handleAddComment = async () => {
         if (!newComment.trim()) {
             return;
         }
 
         try {
-            // Отримуємо актуальний токен з localStorage
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
-
-            // Декодуємо ID користувача (можна зробити це безпосередньо перед запитом)
-            const decoded = jwtDecode(currentToken);
-
-            // Використовуємо функцію-обгортку замість звичайного fetch
             const res = await requestWithRefresh(
                 `http://localhost:5000/api/comments`, 
                 {
@@ -343,7 +334,7 @@ function BookPage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         parent_id: null,
-                        author_id: decoded.userId,
+                        author_id: currentUser.userId,
                         book_id: id,
                         text: newComment,
                     }),
@@ -365,33 +356,8 @@ function BookPage() {
             }
         } catch (err) {
             console.error("Критична помилка при відправці:", err);
-            if (err.message?.includes("Invalid token")) {
-                localStorage.removeItem("token");
-                navigate("/login");
-            }
         }
     };
-
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const res = await requestWithRefresh(
-                    `http://localhost:5000/api/comments/book/${id}`
-                );
-                const data = await res.json();
-
-                if (res.ok) {
-                    setComments(data.comments || []);
-                } else {
-                    console.error("Сервер повернув помилку:", data.message);
-                }
-            } catch (err) {
-                console.error("Помилка завантаження коментарів:", err);
-            }
-        };
-
-        fetchComments();
-    }, [id]);
 
     const handleDeleteComment = async (commentId) => {
         try {
@@ -473,12 +439,6 @@ function BookPage() {
             return;
         }
         try {
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
-            const decoded = jwtDecode(currentToken);
-
             const res = await requestWithRefresh(
                 `http://localhost:5000/api/comments`, 
                 {
@@ -486,7 +446,7 @@ function BookPage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         parent_id: parentId,
-                        author_id: decoded.userId,
+                        author_id: currentUser.userId,
                         book_id: id,
                         text: replyText,
                     }),
@@ -537,10 +497,6 @@ function BookPage() {
             }
         } catch (err) {
             console.error("Критична помилка при відправці:", err);
-            if (err.message?.includes("Invalid token")) {
-                localStorage.removeItem("token");
-                navigate("/login");
-            }
         }
     };
 
@@ -569,7 +525,13 @@ function BookPage() {
                                 <i
                                     key={star}
                                     className={`fas fa-star ${star <= userRating ? "active" : ""}`}
-                                    onClick={() => handleRating(star)}
+                                    onClick={() => {
+                                        if (isLoggedIn) {
+                                            handleRating(star);
+                                        } else {
+                                            navigate("/become_dragon");
+                                        }
+                                    }}
                                 ></i>
                             ))}
                         </div>
@@ -610,18 +572,20 @@ function BookPage() {
                         </button>
                     )}
 
-                    <div className="page-book__status-container" style={{ marginTop: "15px" }}>
-                        <select
-                            value={userStatus}
-                            onChange={(e) => handleStatusChange(e.target.value)}
-                            className="page-book__status-select"
-                        >
-                            <option value="">Додати до списку</option>
-                            <option value="Заплановано">Заплановано</option>
-                            <option value="В процесі">В процесі</option>
-                            <option value="Прочитано">Прочитано</option>
-                        </select>
-                    </div>
+                    {isLoggedIn && (
+                        <div className="page-book__status-container" style={{ marginTop: "15px" }}>
+                            <select
+                                value={userStatus}
+                                onChange={(e) => handleStatusChange(e.target.value)}
+                                className="page-book__status-select"
+                            >
+                                <option value="">Додати до списку</option>
+                                <option value="Заплановано">Заплановано</option>
+                                <option value="В процесі">В процесі</option>
+                                <option value="Прочитано">Прочитано</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Адмін-панель керування */}
                     {isAdmin && (
@@ -693,17 +657,43 @@ function BookPage() {
             <div className="page-book__comments">
                 <h3 className="page-book__comments-title">Коментарі</h3>
                 {/* Поле створення нового коментаря */}
-                <div className="page-book__comment-create">
-                    <textarea
-                        className="page-book__comment__input"
-                        placeholder="Залишити відгук про книгу..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                    />
-                    <button className="page-book__comment__send-main" onClick={handleAddComment}>
-                        Надіслати коментар
-                    </button>
-                </div>
+                {isLoggedIn ? (
+                    <div className="page-book__comment-create">
+                        <textarea
+                            className="page-book__comment__input"
+                            placeholder="Залишити коментар..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                        />
+                        <button
+                            className="page-book__comment__send-main"
+                            onClick={handleAddComment}
+                        >
+                            Надіслати коментар
+                        </button>
+                    </div>
+                ) : (
+                    <p className="page-book__login-message">
+                        Щоб залишити коментар,{" "}
+                        <button
+                            type="button"
+                            className="page-book__login-link"
+                            onClick={() => navigate("/login", { state: { mode: "login" } })}
+                        >
+                            увійдіть
+                        </button>
+                        {" "}або{" "}
+                        <button
+                            type="button"
+                            className="page-book__login-link"
+                            onClick={() => navigate("/login", { state: { mode: "register" } })}
+                        >
+                            зареєструйтеся
+                        </button>
+                        .
+                    </p>
+                )}
+
                 {comments.map((c) => (
                     <Comment
                         key={c.id}

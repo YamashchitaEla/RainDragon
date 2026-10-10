@@ -1,13 +1,40 @@
-import { useState } from 'react';
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { requestWithRefresh } from "../api/requestWithRefresh";
 import '../styles/components/_header.css';
 
 export default function Header() {
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
-    const currentUser = jwtDecode(token);
+
+    const { currentUser, isAdmin } = useAuth();
+    const isLoggedIn = Boolean(currentUser);
+
     const [menuOpen, setMenuOpen] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(null);
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (!currentUser) {
+                return;
+            }
+
+            try {
+                // Завантаження даних користувача
+                const userRes = await requestWithRefresh(
+                    `http://localhost:5000/api/users/${currentUser.userId}`
+                );
+                const userData = await userRes.json();
+                
+                if (userRes.ok) {
+                    setAvatarUrl(userData.user.avatar);
+                }
+            } catch (err) {
+                console.error("Помилка завантаження профілю:", err);
+            }
+        };
+        fetchProfileData();
+    }, [currentUser?.userId]);
 
     return (
         <>
@@ -23,14 +50,28 @@ export default function Header() {
 
                 {/* Навігація */}
                 <nav className={`header__nav ${menuOpen ? 'open' : ''}`}>
-                    <a href="/main" className="header__nav-link">Головна</a>
-                    <a href="/posts" className="header__nav-link">Форум</a>
-                    <a href="/books" className="header__nav-link">Новели</a>
-                    <a href="/writers" className="header__nav-link">Автори</a>
+                    <Link to="/" className="header__nav-link">Головна</Link>
+                    <Link to="/posts" className="header__nav-link">Форум</Link>
+                    <Link to="/books" className="header__nav-link">Новели</Link>
+                    <Link to="/writers" className="header__nav-link">Автори</Link>
                 </nav>
 
                 <div className="user-icon">
-                    <i className="fa-solid fa-circle-user" onClick={() => navigate(`/profile/${currentUser.userId}`)}></i>
+                    {isLoggedIn ? (
+                        <img
+                            src={avatarUrl || "/default-avatar.png"}
+                            alt="Аватар"
+                            className="profile-header__avatar"
+                            onClick={() => navigate(`/profile/${currentUser.userId}`)}
+                        />
+                    ) : (
+                        <img
+                            src={"/default-avatar.png"}
+                            alt="Аватар"
+                            className="profile-header__avatar"
+                            onClick={() => navigate("/become_dragon")}
+                        />
+                    )}
                 </div>
             </header>
         </>

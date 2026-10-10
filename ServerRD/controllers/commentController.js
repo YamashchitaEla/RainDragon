@@ -1,5 +1,5 @@
 import * as commentService from "../services/commentService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getBookComments = async (req, res) => {
     try {

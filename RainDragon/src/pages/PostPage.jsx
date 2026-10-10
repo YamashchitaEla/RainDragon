@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import PostContent from "../components/PostContent";
 import Comment from "../components/Comment";
@@ -11,29 +11,19 @@ function PostPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Інформація про поточного користувача
-    const token = localStorage.getItem("token");
-    let currentUser = null;
-    if (token) {
-        try {
-            currentUser = jwtDecode(token);
-        } catch (e) {
-            console.error("Невалідний токен:", e);
-        }
-    }
-
-    const isAdmin = currentUser?.admin === true;
-
+    const { currentUser, isAdmin } = useAuth();
+    const isLoggedIn = Boolean(currentUser);
     const [post, setPost] = useState(null);
+    const isOwner = currentUser && String(currentUser.userId) === String(post?.author?.id);
+
     const [tags, setTags] = useState([]);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
 
-    const isOwner = currentUser && String(currentUser.userId) === String(post?.author?.id);
-
+    // Завантаження даних
     const getInfoOfPost = async (postId) => {
         try {
-            const res = await requestWithRefresh(
+            const res = await fetch(
                 `http://localhost:5000/api/post/${postId}`
             );
             const data = await res.json();
@@ -47,10 +37,9 @@ function PostPage() {
         }
     };
 
-    // Отримуємо теги поста
     const getTagsOfPost = async (postId) => {
         try {
-            const res = await requestWithRefresh(
+            const res = await fetch(
                 `http://localhost:5000/api/tags/${postId}`
             );
             const data = await res.json();
@@ -83,9 +72,11 @@ function PostPage() {
         fetchPostAndTags();
     }, [id]);
 
-    // Видалення поста
+    // Видалення публікації
     const handleDeletePost = async (postId) => {
-        if (!window.confirm("Ви впевнені, що хочете видалити цю публікацію?")) return;
+        if (!window.confirm("Ви впевнені, що хочете видалити цю публікацію?")) {
+            return;
+        }
 
         try {
             const res = await requestWithRefresh(
@@ -107,60 +98,10 @@ function PostPage() {
     };
 
     // Коментарі
-    const handleAddComment = async () => {
-        if (!newComment.trim()) return;
-
-        try {
-            // Отримуємо актуальний токен з localStorage
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
-            // Декодуємо ID користувача (можна зробити це безпосередньо перед запитом)
-            const decoded = jwtDecode(currentToken);
-
-            // Використовуємо функцію-обгортку замість звичайного fetch
-            const res = await requestWithRefresh(
-                `http://localhost:5000/api/comments`, 
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        parent_id: null,
-                        author_id: decoded.userId,
-                        post_id: id,
-                        text: newComment,
-                    }),
-                }
-            );
-
-            // Обробка відповіді
-            if (res.ok) {
-                const data = await res.json();
-
-                // Оновлюємо стейт коментарів (новий коментар йде на початок списку)
-                setComments((prev) => [data.comment, ...prev]);
-
-                // Очищуємо поля
-                setNewComment("");
-            } else {
-                const errorData = await res.json();
-                console.error("Помилка сервера:", errorData.message);
-                alert(`Не вдалося додати коментар: ${errorData.message}`);
-            }
-        } catch (err) {
-            console.error("Критична помилка при відправці:", err);
-            if (err.message?.includes("Invalid token")) {
-                localStorage.removeItem("token");
-                navigate("/login");
-            }
-        }
-    };
-
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await requestWithRefresh(
+                const res = await fetch(
                     `http://localhost:5000/api/comments/post/${id}`
                 );
                 const data = await res.json();
@@ -178,6 +119,37 @@ function PostPage() {
         fetchComments();
     }, [id]);
 
+    const handleAddComment = async () => {
+        try {
+            const res = await requestWithRefresh(
+                `http://localhost:5000/api/comments`, 
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        parent_id: null,
+                        author_id: currentUser.userId,
+                        post_id: id,
+                        text: newComment,
+                    }),
+                }
+            );
+
+            // Обробка відповіді
+            if (res.ok) {
+                const data = await res.json();
+                setComments((prev) => [data.comment, ...prev]);
+                setNewComment("");
+            } else {
+                const errorData = await res.json();
+                console.error("Помилка сервера:", errorData.message);
+                alert(`Не вдалося додати коментар: ${errorData.message}`);
+            }
+        } catch (err) {
+            console.error("Критична помилка при відправці:", err);
+        }
+    };
+
     const handleDeleteComment = async (commentId) => {
         try {
             const res = await requestWithRefresh(
@@ -191,10 +163,10 @@ function PostPage() {
                 // Рекурсивна функція для видалення коментаря з будь-якого рівня вкладеності
                 const removeById = (list, targetId) => {
                     return list
-                        .filter((c) => c.id !== targetId) // Видаляємо, якщо ID збігається
+                        .filter((c) => c.id !== targetId) 
                         .map((c) => ({
                             ...c,
-                            replies: c.replies ? removeById(c.replies, targetId) : [], // Шукаємо у відповідях
+                            replies: c.replies ? removeById(c.replies, targetId) : [],
                         }));
                 };
 
@@ -218,17 +190,15 @@ function PostPage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
                         text: newText 
-                    }), // Відправляємо новий текст
+                    }),
                 }
             );
 
             if (res.ok) {
-                // Оскільки сервер повертає лише {"success":true...}, 
-                // ми просто використовуємо наш локальний newText для оновлення стейту
                 const updateById = (list) => {
                     return list.map((c) => {
                         if (c.id === commentId) {
-                            // Оновлюємо текст локально
+                            // Оновити текст локально
                             return { ...c, text: newText };
                         }
                         if (c.replies && c.replies.length > 0) {
@@ -249,15 +219,10 @@ function PostPage() {
     };
 
     const handleReplySubmit = async (parentId, replyText) => {
-        // Логіка додавання відповіді дуже схожа на додавання нового коментаря, але з parent_id
-        if (!replyText.trim()) return;
+        if (!replyText.trim()) {
+            return;
+        }
         try {
-            const currentToken = localStorage.getItem("token");
-            if (!currentToken) {
-                return;
-            }
-            const decoded = jwtDecode(currentToken);
-
             const res = await requestWithRefresh(
                 `http://localhost:5000/api/comments`, 
                 {
@@ -265,7 +230,7 @@ function PostPage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         parent_id: parentId,
-                        author_id: decoded.userId,
+                        author_id: currentUser.userId,
                         post_id: id,
                         text: replyText,
                     }),
@@ -277,17 +242,16 @@ function PostPage() {
                 const data = await res.json();
                 const newReply = data.comment;
 
-                // Створюємо функцію для пошуку батька та вставки відповіді
+                // Функція для пошуку батька та вставки відповіді
                 const insertReply = (list, pId, reply) => {
                     return list.map((c) => {
                         if (c.id === pId) {
-                            // Знайшли батька — додаємо відповідь у початок або кінець його списку replies
                             return {
                                 ...c,
                                 replies: [reply, ...(c.replies || [])],
                             };
                         }
-                        // Якщо у цього коментаря є свої відповіді, шукаємо в них (рекурсія)
+                        // Якщо у цього коментаря є свої відповіді, шукати в них (рекурсія)
                         if (c.replies && c.replies.length > 0) {
                             return {
                                 ...c,
@@ -299,16 +263,13 @@ function PostPage() {
                 };
 
                 setComments((prev) => {
-                    // Якщо parent_id немає — це основний коментар, додаємо в корінь
+                    // Якщо parent_id немає — це основний коментар, додати в корінь
                     if (!parentId) {
                         return [newReply, ...prev];
                     }
-                    // Якщо є parent_id — шукаємо куди вставити
+                    // Якщо є parent_id — шукати куди вставити
                     return insertReply(prev, parentId, newReply);
                 });
-
-                // Очищення полів (якщо потрібно)
-                setNewComment("");
             } else {
                 const errorData = await res.json();
                 console.error("Помилка сервера:", errorData.message);
@@ -316,10 +277,6 @@ function PostPage() {
             }
         } catch (err) {
             console.error("Критична помилка при відправці:", err);
-            if (err.message?.includes("Invalid token")) {
-                localStorage.removeItem("token");
-                navigate("/login");
-            }
         }
     };
 
@@ -425,18 +382,42 @@ function PostPage() {
                 <h3 className="page-post__comments-title">
                     Коментарі
                 </h3>
-                <div className="page-post__comment-create">
-                    <textarea
-                        className="page-post__comment__input"
-                        placeholder="Залишити коментар..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                    />
-                    <button className="page-post__comment__send-main" onClick={handleAddComment}>
-                        Надіслати коментар
-                    </button>
-
-                </div>
+                {isLoggedIn ? (
+                    <div className="page-post__comment-create">
+                        <textarea
+                            className="page-post__comment__input"
+                            placeholder="Залишити коментар..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                        />
+                        <button
+                            className="page-post__comment__send-main"
+                            onClick={handleAddComment}
+                        >
+                            Надіслати коментар
+                        </button>
+                    </div>
+                ) : (
+                    <p className="page-post__login-message">
+                        Щоб залишити коментар,{" "}
+                        <button
+                            type="button"
+                            className="page-post__login-link"
+                            onClick={() => navigate("/login")}
+                        >
+                            увійдіть
+                        </button>
+                        {" "}або{" "}
+                        <button
+                            type="button"
+                            className="page-post__login-link"
+                            onClick={() => navigate("/register")}
+                        >
+                            зареєструйтеся
+                        </button>
+                        .
+                    </p>
+                )}
 
                 {comments.map((c) => (
                     <Comment

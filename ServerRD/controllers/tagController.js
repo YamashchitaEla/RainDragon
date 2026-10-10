@@ -1,5 +1,5 @@
 import * as tagService from "../services/tagService.js";
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getTags = async (req, res) => {
     try {

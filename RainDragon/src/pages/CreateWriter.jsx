@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -11,25 +11,24 @@ function CreateWriter() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const { currentUser, isAdmin, authChecked } = useAuth();
+
     // Визначаємо режим на основі наявності ID або переданого стану
     const mode = location.state?.mode || (id ? "edit" : "create");
 
-    // Перевірка на адміна
+    const [writer, setWriter] = useState(null);
+    
+    // Завантаження автора при редагуванні
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const currentUser = jwtDecode(token);
-        const isAdmin = currentUser.admin === true;
-        if (!isAdmin) {
+        if (!authChecked) {
+            return;
+        }
+
+        if (!isAdmin){
             alert("У вас немає прав для доступу до цієї сторінки.");
             window.location.href = "/"; // Перенаправлення на головну сторінку
         }
-    }, []);
 
-    // Дані автора
-    const [writer, setWriter] = useState(null);
-
-    // Завантаження автора при редагуванні
-    useEffect(() => {
         if (mode === "edit" && id) {
             const fetchWriterData = async () => {
                 try {
@@ -46,7 +45,7 @@ function CreateWriter() {
             };
             fetchWriterData();
         }
-    }, [id, mode]);
+    }, [authChecked, isAdmin, id, mode]);
 
     // Обробник відправки форми
     const handleSubmit = async (e) => {
@@ -81,6 +80,12 @@ function CreateWriter() {
             console.error("Помилка відправки:", err);
         }
     };
+
+    if (!authChecked) {
+        return <div className="no-results">
+                    <p>На жаль, за вашим запитом нічого не знайдено.</p>
+                </div>;
+    }
 
     return (
         <div className="create-writer">

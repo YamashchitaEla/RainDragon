@@ -1,5 +1,5 @@
 import * as writerService from '../services/writerService.js';
-import { handleControllerError } from '../utils/errorHandler.js';
+import { handleControllerError } from '../utils/errorHelper.js';
 
 export const getWriters = async (req, res) => {
     try {

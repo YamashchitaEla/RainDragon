@@ -36,12 +36,12 @@
     width: 100px;
 }
 
-.header .user-icon{
-    display: flex;
-    width: 150px;
-    height: fit-content;
-    justify-content: flex-end;
-    align-items: center;
+.header .profile-header__avatar {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
 }
 
 .header .fa-solid {
