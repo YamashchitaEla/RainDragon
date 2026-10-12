@@ -403,7 +403,7 @@ function PostPage() {
                         <button
                             type="button"
                             className="page-post__login-link"
-                            onClick={() => navigate("/login")}
+                            onClick={() => navigate("/login", { state: { mode: "login" } })}
                         >
                             увійдіть
                         </button>
@@ -411,7 +411,7 @@ function PostPage() {
                         <button
                             type="button"
                             className="page-post__login-link"
-                            onClick={() => navigate("/register")}
+                            onClick={() => navigate("/login", { state: { mode: "register" } })}
                         >
                             зареєструйтеся
                         </button>

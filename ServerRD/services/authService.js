@@ -1,12 +1,28 @@
 import { User } from "../models/User.js"
+import { randomUUID } from "node:crypto";
 import { BadRequestError, UnauthorizedError, AppError } from "../utils/customErrors.js";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const generateTokens = (userId, admin) => {
-    const accessToken = jwt.sign({ userId, admin }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    const refreshToken = jwt.sign({ userId, admin }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    const accessToken = jwt.sign(
+        { 
+            userId, 
+            admin 
+        }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: "1h" }
+    );
+    const refreshToken = jwt.sign(
+        {
+            userId,
+            admin,
+            jti: randomUUID()
+        },
+        process.env.REFRESH_SECRET,
+        { expiresIn: "7d" }
+    );
     return { accessToken, refreshToken };
 };
 
@@ -30,6 +46,7 @@ export const loginService = async (login, password, requestedAdminRole) => {
     const finalAdminStatus = user.admin && wantsAdmin;
 
     return {
+        userId: user.id,
         ...generateTokens(user.id, finalAdminStatus),
     };
 }
@@ -44,6 +61,9 @@ export const registerService = async (nickname, login, password) => {
     const user = await User.create({ nickname, login, password: hashedPassword }); // тут у нас вже є user.id
 
     return {
+        userId: user.id,
         ...generateTokens(user.id, false),
     };
 };
+
+

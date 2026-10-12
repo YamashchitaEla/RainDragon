@@ -33,7 +33,7 @@ export const getBookById = async (id) => {
 
 export const createBook = async (original_name, ukrainian_name, year, status, volumes, chapters, extras, description, preview, authors, genres) => {
     // Перевірка обов'язкових полів
-    const isBasicFieldsEmpty = !original_name || !ukrainian_name || !year || !status || !description || !previewFile;
+    const isBasicFieldsEmpty = !original_name || !ukrainian_name || !year || !status || !description || !preview;
     const isAuthorsEmpty = !authors || authors.length === 0;
     const isGenresEmpty = !genres || genres.length === 0;
 

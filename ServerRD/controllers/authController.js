@@ -1,22 +1,21 @@
 import { loginService, registerService } from "../services/authService.js";
+import { COOKIE_NAME, cookieOptions, clearRefreshCookie} from "../utils/cookieOptions.js";
+import { createRefreshSession, revokeRefreshSession } from "../services/refreshSessionService.js";
 import { handleControllerError } from '../utils/errorHelper.js';
-import jwt from "jsonwebtoken";
 
 export const login = async (req, res) => {
     try {
-        const { login, password, admin } = req.body;
-        const { accessToken, refreshToken } = await loginService(
+        const { login, password, admin, rememberMe } = req.body;
+        const { userId, accessToken, refreshToken } = await loginService(
             login, 
             password, 
             admin
         );
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        // Якщо галочка ввімкнена, cookie зберігатиметься до 7 днів. Коли вимкнена — буде сесійною cookie без maxAge
+        const remember = rememberMe === true || rememberMe === "true";
+        await createRefreshSession(userId, refreshToken, remember);
+        res.cookie(COOKIE_NAME, refreshToken, cookieOptions(remember));
 
         return res.status(200).json({
             success: true,
@@ -32,19 +31,17 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
     try {
-        const { nickname, login, password } = req.body;
-        const { accessToken, refreshToken } = await registerService(
+        const { nickname, login, password, rememberMe } = req.body;
+        const { userId, accessToken, refreshToken } = await registerService(
             nickname,
             login,
             password
         );
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        // Якщо галочка ввімкнена, cookie зберігатиметься до 7 днів. Коли вимкнена — буде сесійною cookie без maxAge
+        const remember = rememberMe === true || rememberMe === "true";
+        await createRefreshSession(userId, refreshToken, remember);
+        res.cookie(COOKIE_NAME, refreshToken, cookieOptions(remember));
 
         return res.status(201).json({
             success: true,
@@ -56,45 +53,17 @@ export const register = async (req, res) => {
     }
 };
 
-export const refresh = async (req, res) => {
-    try {
-        const refreshToken = req.cookies?.refreshToken;
-
-        if (!refreshToken) {
-            return res.status(401).json({
-                success: false,
-                message: "No refresh token"
-            });
-        }
-
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.REFRESH_SECRET
-        );
-
-        const newAccessToken = jwt.sign(
-            { userId: decoded.userId, admin: decoded.admin },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        return res.status(200).json({
-            success: true,
-            accessToken: newAccessToken
-        });
-    } catch (err) {
-        return handleControllerError(res, err, "Refresh Token Invalid");
-    }
-};
-
 export const logout = async (req, res) => {
     try {
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax"
-        });
 
+        const refreshToken = req.cookies?.refreshToken;
+
+        if (refreshToken) {
+            await revokeRefreshSession(refreshToken);
+        }
+
+        clearRefreshCookie(res);
+        
         return res.status(200).json({
             success: true
         });

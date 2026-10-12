@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 import PostEditor from "../components/PostEditor";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import "../styles/pages/_create-post.css";
