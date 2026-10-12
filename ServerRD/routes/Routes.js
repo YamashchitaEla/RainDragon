@@ -1,9 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { login } from "../controllers/authController.js";
-import { register } from "../controllers/authController.js";
-import { refresh } from "../controllers/authController.js";
-import { logout } from "../controllers/authController.js";
+import { login, register, logout } from "../controllers/authController.js";
+import { refresh } from "../controllers/refreshController.js";
 import { getUserById } from "../controllers/userController.js";
 import { updateProfile } from "../controllers/userController.js";
 import * as bookController from "../controllers/bookController.js";

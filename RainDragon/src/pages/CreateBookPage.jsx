@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"; // Виправив імпорт (прибрав 'use')
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { requestWithRefresh } from "../api/requestWithRefresh";
 import '../styles/pages/_create-book.css';
-import { jwtDecode } from "jwt-decode";
 
 function CreateBookPage() {
     const { id } = useParams(); // Отримуємо ID з URL

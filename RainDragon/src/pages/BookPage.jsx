@@ -244,9 +244,6 @@ function BookPage() {
 
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("Відповідь рейтингу:", data);
-                    console.log("Рейтинг користувача:", data.rating?.user_rating);
-                    console.log("Середній рейтинг:", data.rating?.average_rating);
                     setUserRating(data.rating?.user_rating || 0);
                     setBookRating(Number(data.rating?.average_rating) || 0);
                 }

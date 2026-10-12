@@ -178,8 +178,12 @@ function Profile() {
         } catch (err) {
             console.error("Помилка при виході на сервері:", err);
         } finally {
-            // У будь-якому випадку чистимо локальні дані
             localStorage.removeItem("token");
+            sessionStorage.removeItem("token");
+
+            localStorage.removeItem("sessionKnown");
+            sessionStorage.removeItem("sessionKnown");
+
             window.dispatchEvent(new Event("authChanged"));
             navigate("/");
             window.location.reload();
